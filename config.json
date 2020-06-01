@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    [
+      "babel-plugin-polyfill-corejs3",
+      {
+        "method": "usage-global",
+        "targets": {
+          "edge": 16
+        }
+      }
+    ]
+  ]
+}

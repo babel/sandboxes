@@ -1,0 +1,12 @@
+body {
+  font-family: sans-serif;
+  background-color: #24282a;
+  color: white;
+  font-family: Menlo;
+  font-size: 14px;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}

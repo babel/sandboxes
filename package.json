@@ -1,0 +1,20 @@
+{
+  "name": "babel-babel-polyfills-examples",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-external-helpers": "^7.8.3",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4",
+    "babel-plugin-polyfill-corejs2": "0.0.2",
+    "babel-plugin-polyfill-corejs3": "0.0.2",
+    "babel-plugin-polyfill-es-shims": "0.0.2",
+    "babel-plugin-polyfill-regenerator": "0.0.2",
+    "react": "16.11.0",
+    "react-dom": "16.11.0",
+    "styled-components": "4.4.1",
+    "use-codemirror": "0.1.1"
+  },
+  "keywords": []
+}
