@@ -5,9 +5,11 @@ import styled, { css } from "styled-components";
 
 import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
+import { gzipSize } from "../gzip";
 
 function CompiledOutput({ source, customPlugin, config, onConfigChange }) {
   const [compiled, setCompiled] = useState(null);
+  const [gzip, setGzip] = useState(null);
 
   useEffect(() => {
     try {
@@ -15,8 +17,10 @@ function CompiledOutput({ source, customPlugin, config, onConfigChange }) {
         source,
         processOptions(config, customPlugin)
       );
+      gzipSize(code).then((s) => setGzip(s));
       setCompiled({
         code,
+        size: new Blob([code], { type: "text/plain" }).size,
       });
     } catch (e) {
       setCompiled({
@@ -48,6 +52,9 @@ function CompiledOutput({ source, customPlugin, config, onConfigChange }) {
           isError={compiled?.error ?? false}
         />
       </Section>
+      <FileSize>
+        {compiled?.size}b, {gzip}b
+      </FileSize>
     </Wrapper>
   );
 }
@@ -55,12 +62,13 @@ function CompiledOutput({ source, customPlugin, config, onConfigChange }) {
 export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
   const [source, setSource] = React.useState(defaultSource);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
-
   const [babelConfig, setBabelConfig] = useState(
     Array.isArray(defaultBabelConfig)
       ? defaultBabelConfig
       : [defaultBabelConfig]
   );
+  const [size, setSize] = useState(null);
+  const [gzip, setGzip] = useState(null);
 
   const updateBabelConfig = useCallback((config, index) => {
     setBabelConfig((configs) => {
@@ -83,14 +91,25 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
     );
   });
 
+  useEffect(() => {
+    let size = new Blob([source], { type: "text/plain" }).size;
+    setSize(size);
+    gzipSize(source).then((s) => setGzip(s));
+  }, [source]);
+
   return (
     <Root>
       <Section>
-        <Code
-          value={source}
-          onChange={(val) => setSource(val)}
-          docName="source.js"
-        />
+        <Wrapper>
+          <Code
+            value={source}
+            onChange={(val) => setSource(val)}
+            docName="source.js"
+          />
+          <FileSize>
+            {size}b, {gzip}b
+          </FileSize>
+        </Wrapper>
         <Code
           value={customPlugin}
           onChange={(val) => setCustomPlugin(val)}
@@ -132,9 +151,23 @@ const Config = styled(Editor)`
 
 const Code = styled(Editor)`
   padding: 4px;
+  width: 100%;
+
   ${(p) =>
     p.isError &&
     css`
       background: rgba(234, 76, 137, 0.2);
     `};
+`;
+
+const FileSize = styled.div`
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 2;
+  border-radius: 0.5rem;
+  padding: 0.2rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.9);
+  border: 0;
 `;
