@@ -61,6 +61,7 @@ function CompiledOutput({ source, customPlugin, config, onConfigChange }) {
 
 export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
   const [source, setSource] = React.useState(defaultSource);
+  const [enableCustomPlugin, toggleCustomPlugin] = React.useState(true);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
   const [babelConfig, setBabelConfig] = useState(
     Array.isArray(defaultBabelConfig)
@@ -83,7 +84,7 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
     return (
       <CompiledOutput
         source={source}
-        customPlugin={customPlugin}
+        customPlugin={enableCustomPlugin ? customPlugin : undefined}
         config={config}
         key={index}
         onConfigChange={(config) => updateBabelConfig(config, index)}
@@ -100,6 +101,14 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
   return (
     <Root>
       <Section>
+        <label>
+          <input
+            checked={enableCustomPlugin}
+            onChange={() => toggleCustomPlugin(!enableCustomPlugin)}
+            type="checkbox"
+          />
+          <span>Custom Plugin</span>
+        </label>
         <Wrapper>
           <Code
             value={source}
@@ -110,12 +119,17 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
             {size}b, {gzip}b
           </FileSize>
         </Wrapper>
-        <Code
-          style={{ flex: 0 }}
-          value={customPlugin}
-          onChange={(val) => setCustomPlugin(val)}
-          docName="plugin.js"
-        />
+        {
+          <Code
+            style={{
+              flex: 0,
+              display: enableCustomPlugin ? "block" : "none",
+            }}
+            value={customPlugin}
+            onChange={(val) => setCustomPlugin(val)}
+            docName="plugin.js"
+          />
+        }
         {results}
       </Section>
     </Root>
