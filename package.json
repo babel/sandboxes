@@ -11,10 +11,11 @@
     "babel-plugin-polyfill-corejs3": "0.0.2",
     "babel-plugin-polyfill-es-shims": "0.0.2",
     "babel-plugin-polyfill-regenerator": "0.0.2",
+    "codemirror": "^5.54.0",
     "react": "16.11.0",
+    "react-codemirror2": "^7.2.0",
     "react-dom": "16.11.0",
-    "styled-components": "4.4.1",
-    "use-codemirror": "0.1.1"
+    "styled-components": "4.4.1"
   },
   "scripts": {
     "start": "react-scripts start"

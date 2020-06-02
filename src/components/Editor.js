@@ -1,8 +1,10 @@
+import 'codemirror/mode/javascript/javascript';
 import React from "react";
 import styled from "styled-components";
-import { useCodeMirror } from "use-codemirror";
+import { Controlled as CodeMirror } from 'react-codemirror2';
 
-const StyledEditor = styled.div`
+const StyledEditor = styled(CodeMirror)`
+  position: relative;
   height: 100%;
 
   .CodeMirror {
@@ -21,21 +23,19 @@ const StyledEditor = styled.div`
   }
 `;
 
-export function Editor({ className, style, ...options }) {
-  let codeMirror = useCodeMirror({
-    ...options,
-    config: { theme: "material", ...options.config },
-  });
-
-  if (codeMirror.editor && options.config && options.config.readOnly) {
-    codeMirror.editor.setValue(options.value);
-  }
-
+export function Editor({ className, onChange, style, ...options }) {
   return (
-    <StyledEditor className={className} style={style}>
-      <pre ref={codeMirror.ref} className={codeMirror.config.theme}>
-        {options.value}
-      </pre>
-    </StyledEditor>
+    <StyledEditor
+      className={className}
+      onBeforeChange={(editor, data, value) => {
+        onChange(value);
+      }}
+      options={{
+        scrollbarStyle: null,
+        theme: 'material',
+        ...options.config,
+      }}
+      style={style}
+      value={options.value} />
   );
 }
