@@ -111,6 +111,7 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
           </FileSize>
         </Wrapper>
         <Code
+          style={{ flex: 0 }}
           value={customPlugin}
           onChange={(val) => setCustomPlugin(val)}
           docName="plugin.js"

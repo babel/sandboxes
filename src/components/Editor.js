@@ -24,7 +24,7 @@ const StyledEditor = styled.div`
 export function Editor({ className, style, ...options }) {
   let codeMirror = useCodeMirror({
     ...options,
-    config: { theme: "material", ...options.config }
+    config: { theme: "material", ...options.config },
   });
 
   if (codeMirror.editor && options.config && options.config.readOnly) {
