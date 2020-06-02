@@ -1,12 +1,10 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 // import * as Babel from "@babel/standalone";
 import * as Babel from "@babel/core";
 import styled from "styled-components";
 
-import dependencies from "../../package.json";
 import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
-import { compactFixture, serialize } from "../ast";
 
 const Section = styled.section`
   display: flex;
@@ -31,26 +29,27 @@ const SubSection = styled.div`
 function CompiledOutput({
   source,
   customPlugin,
-  defaultBabelConfig,
-  index,
-  setCompiled
+  config,
+  onConfigChange
 }) {
-  const [babelConfig, setBabelConfig] = React.useState(defaultBabelConfig);
+  const [compiled, setCompiled] = useState(null);
 
-  var transpiled, ast;
-  try {
-    const res = Babel.transform(
-      source,
-      processOptions(babelConfig, customPlugin)
-    );
-    transpiled = res.code;
-    ast = compactFixture(JSON.stringify(res.ast, (k, v) => serialize(v), 2));
-  } catch (e) {
-    console.error(e);
-    transpiled = e.message;
-  }
-
-  setCompiled(index, transpiled);
+  useEffect(() => {
+    try {
+      const { code } = Babel.transform(
+        source,
+        processOptions(config, customPlugin)
+      );
+      setCompiled({
+        code,
+      });
+    } catch (e) {
+      setCompiled({
+        code: e.message,
+        error: true
+      });
+    }
+  }, [source, config, customPlugin]);
 
   return (
     <div
@@ -61,17 +60,18 @@ function CompiledOutput({
     >
       <SubSection>
         <Editor
-          value={babelConfig}
-          onChange={val => setBabelConfig(val)}
+          value={config === Object(config) ? JSON.stringify(config, null, '\t') : config}
+          onChange={onConfigChange}
           docName="config.json"
           config={{ mode: "application/json" }}
         />
       </SubSection>
       <Section>
         <Editor
-          value={transpiled}
+          value={compiled?.code ?? ""}
           docName="result.js"
-          config={{ readOnly: true }}
+          config={{ readOnly: true, lineWrapping: true }}
+          isError={compiled?.error ?? false}
         />
       </Section>
     </div>
@@ -81,23 +81,30 @@ function CompiledOutput({
 export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
   const [source, setSource] = React.useState(defaultSource);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
-  const [transpiled, setTranspiled] = React.useState([]);
 
-  let results = [0, 1].map(i => {
-    let config = Array.isArray(defaultBabelConfig)
-      ? defaultBabelConfig[i]
-      : defaultBabelConfig;
+  const [babelConfig, setBabelConfig] = useState(
+    Array.isArray(defaultBabelConfig)
+      ? defaultBabelConfig
+      : [defaultBabelConfig]
+  );
+
+  const updateBabelConfig = useCallback((config, index) => {
+    setBabelConfig(configs => {
+      const newConfigs = [...configs];
+      newConfigs[index] = config;
+
+      return newConfigs;
+    });
+  }, []);
+
+  let results = babelConfig.map((config, index) => {
     return (
       <CompiledOutput
         source={source}
         customPlugin={customPlugin}
-        defaultBabelConfig={config}
-        key={i}
-        index={i}
-        setCompiled={(i, newCompiled) => {
-          transpiled[i] = newCompiled;
-          setTranspiled(transpiled);
-        }}
+        config={config}
+        key={index}
+        onConfigChange={config => updateBabelConfig(config, index)}
       />
     );
   });
@@ -109,7 +116,6 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         flexDirection: "column",
         height: "100%",
         // height: "100vh",
-        // overflow: "hidden",
         padding: 8
       }}
     >
@@ -119,11 +125,11 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
           onChange={val => setSource(val)}
           docName="source.js"
         />
-        {/* <Editor
+        <Editor
           value={customPlugin}
           onChange={val => setCustomPlugin(val)}
           docName="plugin.js"
-        /> */}
+        />
       </Section>
       <div
         style={{

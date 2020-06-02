@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/plugin-external-helpers": "^7.8.3",
-    "@babel/preset-env": "^7.9.5",
-    "@babel/preset-react": "^7.9.4",
+    "@babel/core": "~7.10.0",
+    "@babel/plugin-external-helpers": "~7.10.0",
+    "@babel/preset-env": "^7.10.0",
+    "@babel/preset-react": "^7.10.0",
     "babel-plugin-polyfill-corejs2": "0.0.2",
     "babel-plugin-polyfill-corejs3": "0.0.2",
     "babel-plugin-polyfill-es-shims": "0.0.2",
@@ -16,5 +16,19 @@
     "styled-components": "4.4.1",
     "use-codemirror": "0.1.1"
   },
-  "keywords": []
+  "scripts": {
+    "start": "react-scripts start"
+  },
+  "devDependencies": {
+    "react-scripts": "3.4.1"
+  },
+  "browserslist": {
+    "production": [
+      "edge 16"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version"
+    ]
+  }
 }

@@ -12,7 +12,7 @@ function transpilePlugin(pluginString) {
     configFile: false,
     ast: false,
     highlightCode: false,
-    presets: ["@babel/preset-env"]
+    presets: [availablePresets["@babel/preset-env"]]
   }).code;
 }
 

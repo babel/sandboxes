@@ -1,5 +1,5 @@
 // compact loc properties into a single line
-export function compactFixture(jsonString) {
+function compactFixture(jsonString) {
   return jsonString.replace(
     /"start": (\d+),\s+"end": (\d+),\s+"loc": \{\s+"start":\s\{\s+"line": (\d+),\s+"column": (\d+)\s+\},\s+"end":\s\{\s+"line": (\d+),\s+"column": (\d+)\s+\s+\}(?:,\s+"identifierName": "(\S+)")?\s+\}/gm,
     (_, p1, p2, p3, p4, p5, p6, p7) => {
@@ -13,7 +13,7 @@ export function compactFixture(jsonString) {
 
 const serialized = "$$ babel internal serialized type";
 
-export function serialize(value) {
+function serialize(value) {
   // eslint-disable-next-line valid-typeof
   if (typeof value === "bigint") {
     return {
@@ -31,4 +31,8 @@ export function serialize(value) {
     return value.toString();
   }
   return value;
+}
+
+export function formatAST(ast) {
+  return compactFixture(JSON.stringify(ast, (k, v) => serialize(v), 2));
 }
