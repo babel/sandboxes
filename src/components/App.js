@@ -7,7 +7,13 @@ import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 
-function CompiledOutput({ source, customPlugin, config, onConfigChange }) {
+function CompiledOutput({
+  source,
+  customPlugin,
+  config,
+  onConfigChange,
+  removeConfig,
+}) {
   const [compiled, setCompiled] = useState(null);
   const [gzip, setGzip] = useState(null);
 
@@ -43,6 +49,9 @@ function CompiledOutput({ source, customPlugin, config, onConfigChange }) {
           docName="config.json"
           config={{ mode: "application/json" }}
         />
+        <Toggle>
+          <button onClick={removeConfig}>x</button>
+        </Toggle>
       </Section>
       <Section>
         <Code
@@ -80,6 +89,17 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
     });
   }, []);
 
+  const removeBabelConfig = useCallback((index) => {
+    setBabelConfig((configs) => {
+      return [...configs].splice(index, 1);
+    });
+  }, []);
+
+  const addBabelConfig = () =>
+    setBabelConfig((configs) => {
+      return [...configs, configs[configs.length - 1]];
+    });
+
   let results = babelConfig.map((config, index) => {
     return (
       <CompiledOutput
@@ -88,6 +108,7 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         config={config}
         key={index}
         onConfigChange={(config) => updateBabelConfig(config, index)}
+        removeConfig={() => removeBabelConfig(index)}
       />
     );
   });
@@ -119,18 +140,24 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
             {size}b, {gzip}b
           </FileSize>
         </Wrapper>
-        {
+        <Wrapper
+          style={{
+            display: enableCustomPlugin ? "block" : "none",
+          }}
+        >
           <Code
-            style={{
-              flex: 0,
-              display: enableCustomPlugin ? "block" : "none",
-            }}
             value={customPlugin}
             onChange={(val) => setCustomPlugin(val)}
             docName="plugin.js"
           />
-        }
+          <Toggle>
+            <button onClick={() => toggleCustomPlugin(false)}>x</button>
+          </Toggle>
+        </Wrapper>
         {results}
+        <Wrapper>
+          <button onClick={() => addBabelConfig()}>Add New Config</button>
+        </Wrapper>
       </Section>
     </Root>
   );
@@ -148,7 +175,8 @@ const Section = styled.section`
   display: flex;
   flex-direction: column;
   height: 100%;
-  flex: 2;
+  flex: 1;
+  position: relative;
 `;
 
 const Wrapper = styled.div`
@@ -159,8 +187,6 @@ const Wrapper = styled.div`
 `;
 
 const Config = styled(Editor)`
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.75rem;
   padding: 4px;
 `;
 
@@ -185,4 +211,11 @@ const FileSize = styled.div`
   background-color: rgba(255, 255, 255, 0.8);
   color: rgba(0, 0, 0, 0.9);
   border: 0;
+`;
+
+const Toggle = styled.div`
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  z-index: 2;
 `;
