@@ -31,7 +31,13 @@ const CONFIG = [
   {},
 ];
 const PLUGIN = `export default function customPlugin(babel) {
-  return {};
+  return {
+    visitor: {
+      Identifier(path) {
+        // console.log(path.node.name);
+      }
+    }
+  };
 }
 `;
 render(

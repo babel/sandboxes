@@ -124,10 +124,23 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
             />
             <span>Custom Plugin</span>
           </label>
-          <button onClick={() => setBabelConfig((configs) => [...configs, configs[configs.length - 1]])}>Add New Config</button>
-          <button onClick={() => {
-            setSource('const hello = \'world\';')
-          }}>Use Example</button>
+          <button
+            onClick={() =>
+              setBabelConfig((configs) => [
+                ...configs,
+                configs[configs.length - 1],
+              ])
+            }
+          >
+            Add New Config
+          </button>
+          <button
+            onClick={() => {
+              setSource("const hello = 'world';");
+            }}
+          >
+            Use Example
+          </button>
         </Actions>
 
         <Wrapper>
@@ -140,14 +153,16 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
             {size}b, {gzip}b
           </FileSize>
         </Wrapper>
-        {enableCustomPlugin && <Wrapper>
-          <Code
-            value={customPlugin}
-            onChange={(val) => setCustomPlugin(val)}
-            docName="plugin.js"
-          />
-          <Toggle onClick={() => toggleCustomPlugin(false)} />
-        </Wrapper>}
+        {enableCustomPlugin && (
+          <Wrapper>
+            <Code
+              value={customPlugin}
+              onChange={(val) => setCustomPlugin(val)}
+              docName="plugin.js"
+            />
+            <Toggle onClick={() => toggleCustomPlugin(false)} />
+          </Wrapper>
+        )}
         {results}
       </Section>
     </Root>
@@ -157,7 +172,7 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
 // UTILS
 
 function Toggle(props) {
-  return <ToggleRoot {...props}>x</ToggleRoot>
+  return <ToggleRoot {...props}>x</ToggleRoot>;
 }
 
 function useDebounce(value, delay) {
@@ -195,14 +210,14 @@ const Section = styled.section`
 `;
 
 const Wrapper = styled.div`
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
   width: 100%;
   padding: 0.25rem 1rem 0.75rem;
   position: relative;
 
-  &+& {
+  & + & {
     margin-top: 1px;
   }
 `;
@@ -255,7 +270,7 @@ const ToggleRoot = styled.div`
 `;
 
 const Actions = styled(Wrapper)`
-  border-bottom: 1px solid rgba(36, 40, 42, 1.00);
+  border-bottom: 1px solid rgba(36, 40, 42, 1);
   padding: 1rem;
 
   button {
