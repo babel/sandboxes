@@ -8,7 +8,7 @@ import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 import { CountASTNodes } from "./AST";
-import esquery from "esquery";
+import esquery from "@hzoo/esquery";
 
 window.babel = Babel;
 
@@ -119,7 +119,7 @@ export function visitorTemplate(visitor) {
 
 function babyQuery(ast, query) {
   // pass Babel's visitor keys
-  return esquery(Babel.types.VISITOR_KEYS)(ast, query);
+  return esquery.override(Babel.types.VISITOR_KEYS)(ast, query);
 }
 
 function Matches({ source, ast, visitor }) {
