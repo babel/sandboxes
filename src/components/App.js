@@ -1,11 +1,15 @@
 import React, { useState, useCallback, useEffect } from "react";
 // import * as Babel from "@babel/standalone";
 import * as Babel from "@babel/core";
+import { codeFrameColumns as codeFrame } from "@babel/code-frame";
 import styled, { css } from "styled-components";
 
 import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
+import { ASTNodes } from "./AST";
+
+window.babel = Babel;
 
 function CompiledOutput({
   source,
@@ -18,12 +22,13 @@ function CompiledOutput({
   const [gzip, setGzip] = useState(null);
 
   const debouncedSource = useDebounce(source, 125);
+  const debouncedPlugin = useDebounce(customPlugin, 125);
 
   useEffect(() => {
     try {
       const { code } = Babel.transform(
         debouncedSource,
-        processOptions(config, customPlugin)
+        processOptions(config, debouncedPlugin)
       );
       gzipSize(code).then((s) => setGzip(s));
       setCompiled({
@@ -36,7 +41,7 @@ function CompiledOutput({
         error: true,
       });
     }
-  }, [debouncedSource, config, customPlugin]);
+  }, [debouncedSource, config, debouncedPlugin]);
 
   return (
     <Wrapper>
@@ -68,8 +73,96 @@ function CompiledOutput({
   );
 }
 
-export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
+export function visitorTemplate(visitor) {
+  return `return {
+  ${visitor}(path) {
+    match(path.node);
+  }
+}`;
+}
+
+function visitorMatches(source, visitorExpression) {
+  const matchedNodes = new Set();
+  function match(node) {
+    if (matchedNodes.has(node)) return;
+    matchedNodes.add(node);
+    console.log(node);
+  }
+  try {
+    Babel.transform(source, {
+      babelrc: false,
+      configFile: false,
+      plugins: [
+        function analyzePlugin(babel) {
+          return {
+            visitor: {
+              Program(path) {
+                // eslint-disable-next-line
+                new Function(
+                  "path",
+                  "match",
+                  `
+                  path.traverse((() => {
+                    ${visitorExpression}
+                  })());
+                `
+                ).apply({}, [path, match]);
+              },
+            },
+          };
+        },
+      ],
+    });
+  } catch (e) {}
+
+  return matchedNodes;
+}
+
+function Matches({ source, visitor }) {
+  let [matches, setMatches] = useState();
+  const debouncedSource = useDebounce(source, 125);
+  const debouncedVisitor = useDebounce(visitor, 125);
+
+  useEffect(() => {
+    setMatches(Array.from(visitorMatches(debouncedSource, debouncedVisitor)));
+  }, [debouncedSource, debouncedVisitor]);
+
+  if (!matches) {
+    return <div>no matches</div>;
+  }
+
+  let frames = "";
+  for (let { loc } of matches) {
+    // why?
+    // https://github.com/babel/babel/blob/a3f00896f710a95ed38f2f9fb3a6e048148b0b98/packages/babel-core/src/transformation/file/file.js#L249-L262
+    loc = {
+      start: {
+        line: loc.start.line,
+        column: loc.start.column + 1,
+      },
+      end: {
+        line: loc.end.line,
+        column: loc.end.column + 1,
+      },
+    };
+    frames +=
+      codeFrame(debouncedSource, loc, { linesAbove: 0, linesBelow: 0 }) +
+      "\n////\n";
+  }
+
+  return (
+    <Code config={{ readOnly: true }} value={frames} docName="matches.js" />
+  );
+}
+
+export const App = ({
+  defaultSource,
+  defaultBabelConfig,
+  defCustomPlugin,
+  defaultVisitor,
+}) => {
   const [source, setSource] = React.useState(defaultSource);
+  const [visitor, setVisitor] = React.useState(defaultVisitor);
   const [enableCustomPlugin, toggleCustomPlugin] = React.useState(true);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
   const [babelConfig, setBabelConfig] = useState(
@@ -145,6 +238,20 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
 
         <Wrapper>
           <Code
+            value={visitor}
+            onChange={(val) => setVisitor(val)}
+            docName="visitor.js"
+          />
+          <ASTNodes
+            source={source}
+            setVisitorNode={(node) => {
+              setVisitor(visitorTemplate(node));
+            }}
+          />
+        </Wrapper>
+
+        <Wrapper>
+          <Code
             value={source}
             onChange={(val) => setSource(val)}
             docName="source.js"
@@ -152,7 +259,10 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
           <FileSize>
             {size}b, {gzip}b
           </FileSize>
+          {/* <AST source={source}></AST> */}
+          <Matches source={source} visitor={visitor} />
         </Wrapper>
+
         {enableCustomPlugin && (
           <Wrapper>
             <Code

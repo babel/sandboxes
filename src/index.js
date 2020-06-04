@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
-import { App } from "./components/App";
+import { App, visitorTemplate } from "./components/App";
 
 // If you want to add custom plugins or presets, you can register them
 // at plugins-list.js
@@ -40,11 +40,14 @@ const PLUGIN = `export default function customPlugin(babel) {
   };
 }
 `;
+const VISITOR = visitorTemplate("Identifier");
+
 render(
   <App
     defaultBabelConfig={CONFIG}
     defaultSource={SOURCE}
     defCustomPlugin={PLUGIN}
+    defaultVisitor={VISITOR}
   />,
   document.getElementById("root")
 );

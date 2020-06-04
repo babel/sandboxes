@@ -3,16 +3,16 @@ import * as Babel from "@babel/core";
 // take from @babel/standalone
 import {
   presets as availablePresets,
-  plugins as availablePlugins
+  plugins as availablePlugins,
 } from "./plugins-list";
 
-function transpilePlugin(pluginString) {
+export function transpilePlugin(pluginString) {
   return Babel.transform(pluginString, {
     babelrc: false,
     configFile: false,
     ast: false,
     highlightCode: false,
-    presets: [availablePresets["@babel/preset-env"]]
+    presets: [availablePresets["@babel/preset-env"]],
   }).code;
 }
 
@@ -22,7 +22,7 @@ export default function compileModule(code, globals = {}) {
   let module = { exports };
   let globalNames = Object.keys(globals);
   let keys = ["module", "exports", ...globalNames];
-  let values = [module, exports, ...globalNames.map(key => globals[key])];
+  let values = [module, exports, ...globalNames.map((key) => globals[key])];
   // eslint-disable-next-line no-new-func
   new Function(keys.join(), code).apply(exports, values);
   return module.exports;
@@ -45,7 +45,7 @@ export function processOptions(options, customPlugin) {
   if (typeof options === "string") options = JSON.parse(options);
 
   // Parse preset names
-  const presets = (options.presets || []).map(presetName => {
+  const presets = (options.presets || []).map((presetName) => {
     const preset = loadBuiltin(availablePresets, presetName);
 
     if (preset) {
@@ -68,7 +68,7 @@ export function processOptions(options, customPlugin) {
   });
 
   // Parse plugin names
-  const plugins = (options.plugins || []).map(pluginName => {
+  const plugins = (options.plugins || []).map((pluginName) => {
     const plugin = loadBuiltin(availablePlugins, pluginName);
 
     if (!plugin) {
@@ -87,9 +87,8 @@ export function processOptions(options, customPlugin) {
   return {
     babelrc: false,
     configFile: false,
-    ast: true,
     ...options,
     presets,
-    plugins
+    plugins,
   };
 }
