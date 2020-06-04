@@ -40,7 +40,7 @@ const PLUGIN = `export default function customPlugin(babel) {
   };
 }
 `;
-const VISITOR = visitorTemplate("Identifier");
+const VISITOR = "Identifier";
 
 render(
   <App

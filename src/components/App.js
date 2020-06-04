@@ -7,7 +7,8 @@ import styled, { css } from "styled-components";
 import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
-import { ASTNodes } from "./AST";
+import { CountASTNodes } from "./AST";
+import esquery from "esquery";
 
 window.babel = Babel;
 
@@ -20,14 +21,12 @@ function CompiledOutput({
 }) {
   const [compiled, setCompiled] = useState(null);
   const [gzip, setGzip] = useState(null);
-
-  const debouncedSource = useDebounce(source, 125);
   const debouncedPlugin = useDebounce(customPlugin, 125);
 
   useEffect(() => {
     try {
       const { code } = Babel.transform(
-        debouncedSource,
+        source,
         processOptions(config, debouncedPlugin)
       );
       gzipSize(code).then((s) => setGzip(s));
@@ -41,7 +40,7 @@ function CompiledOutput({
         error: true,
       });
     }
-  }, [debouncedSource, config, debouncedPlugin]);
+  }, [source, config, debouncedPlugin]);
 
   return (
     <Wrapper>
@@ -81,51 +80,56 @@ export function visitorTemplate(visitor) {
 }`;
 }
 
-function visitorMatches(source, visitorExpression) {
-  const matchedNodes = new Set();
-  function match(node) {
-    if (matchedNodes.has(node)) return;
-    matchedNodes.add(node);
-    console.log(node);
-  }
-  try {
-    Babel.transform(source, {
-      babelrc: false,
-      configFile: false,
-      plugins: [
-        function analyzePlugin(babel) {
-          return {
-            visitor: {
-              Program(path) {
-                // eslint-disable-next-line
-                new Function(
-                  "path",
-                  "match",
-                  `
-                  path.traverse((() => {
-                    ${visitorExpression}
-                  })());
-                `
-                ).apply({}, [path, match]);
-              },
-            },
-          };
-        },
-      ],
-    });
-  } catch (e) {}
+// function visitorMatches(source, visitorExpression) {
+//   const matchedNodes = new Set();
+//   function match(node) {
+//     if (matchedNodes.has(node)) return;
+//     matchedNodes.add(node);
+//     console.log(node);
+//   }
+//   try {
+//     Babel.transform(source, {
+//       babelrc: false,
+//       configFile: false,
+//       plugins: [
+//         function analyzePlugin(babel) {
+//           return {
+//             visitor: {
+//               Program(path) {
+//                 // eslint-disable-next-line
+//                 new Function(
+//                   "path",
+//                   "match",
+//                   `
+//                   path.traverse((() => {
+//                     ${visitorExpression}
+//                   })());
+//                 `
+//                 ).apply({}, [path, match]);
+//               },
+//             },
+//           };
+//         },
+//       ],
+//     });
+//   } catch (e) {}
 
-  return matchedNodes;
-}
+//   return matchedNodes;
+// }
 
-function Matches({ source, visitor }) {
+function Matches({ source, ast, visitor }) {
   let [matches, setMatches] = useState();
-  const debouncedSource = useDebounce(source, 125);
   const debouncedVisitor = useDebounce(visitor, 125);
 
   useEffect(() => {
-    setMatches(Array.from(visitorMatches(debouncedSource, debouncedVisitor)));
-  }, [debouncedSource, debouncedVisitor]);
+    let res;
+    try {
+      res = esquery.query(ast, debouncedVisitor);
+      setMatches(res);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [ast, debouncedVisitor]);
 
   if (!matches) {
     return <div>no matches</div>;
@@ -146,8 +150,7 @@ function Matches({ source, visitor }) {
       },
     };
     frames +=
-      codeFrame(debouncedSource, loc, { linesAbove: 0, linesBelow: 0 }) +
-      "\n////\n";
+      codeFrame(source, loc, { linesAbove: 0, linesBelow: 0 }) + "\n////\n";
   }
 
   return (
@@ -162,6 +165,7 @@ export const App = ({
   defaultVisitor,
 }) => {
   const [source, setSource] = React.useState(defaultSource);
+  const [ast, setAST] = React.useState({});
   const [visitor, setVisitor] = React.useState(defaultVisitor);
   const [enableCustomPlugin, toggleCustomPlugin] = React.useState(true);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
@@ -172,6 +176,7 @@ export const App = ({
   );
   const [size, setSize] = useState(null);
   const [gzip, setGzip] = useState(null);
+  const debouncedSource = useDebounce(source, 125);
 
   const updateBabelConfig = useCallback((config, index) => {
     setBabelConfig((configs) => {
@@ -189,7 +194,7 @@ export const App = ({
   let results = babelConfig.map((config, index) => {
     return (
       <CompiledOutput
-        source={source}
+        source={debouncedSource}
         customPlugin={enableCustomPlugin ? customPlugin : undefined}
         config={config}
         key={index}
@@ -200,10 +205,17 @@ export const App = ({
   });
 
   useEffect(() => {
-    let size = new Blob([source], { type: "text/plain" }).size;
+    let size = new Blob([debouncedSource], { type: "text/plain" }).size;
     setSize(size);
-    gzipSize(source).then((s) => setGzip(s));
-  }, [source]);
+    gzipSize(debouncedSource).then((s) => setGzip(s));
+  }, [debouncedSource]);
+
+  useEffect(() => {
+    try {
+      let ast = Babel.parse(debouncedSource);
+      setAST(ast);
+    } catch (e) {}
+  }, [debouncedSource]);
 
   return (
     <Root>
@@ -242,10 +254,10 @@ export const App = ({
             onChange={(val) => setVisitor(val)}
             docName="visitor.js"
           />
-          <ASTNodes
-            source={source}
+          <CountASTNodes
+            ast={ast}
             setVisitorNode={(node) => {
-              setVisitor(visitorTemplate(node));
+              setVisitor(node);
             }}
           />
         </Wrapper>
@@ -260,7 +272,7 @@ export const App = ({
             {size}b, {gzip}b
           </FileSize>
           {/* <AST source={source}></AST> */}
-          <Matches source={source} visitor={visitor} />
+          <Matches source={source} ast={ast} visitor={visitor} />
         </Wrapper>
 
         {enableCustomPlugin && (
