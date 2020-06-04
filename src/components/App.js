@@ -117,6 +117,11 @@ export function visitorTemplate(visitor) {
 //   return matchedNodes;
 // }
 
+function babyQuery(ast, query) {
+  // pass Babel's visitor keys
+  return esquery(Babel.types.VISITOR_KEYS)(ast, query);
+}
+
 function Matches({ source, ast, visitor }) {
   let [matches, setMatches] = useState();
   const debouncedVisitor = useDebounce(visitor, 125);
@@ -124,7 +129,7 @@ function Matches({ source, ast, visitor }) {
   useEffect(() => {
     let res;
     try {
-      res = esquery.query(ast, debouncedVisitor);
+      res = babyQuery(ast, debouncedVisitor);
       setMatches(res);
     } catch (e) {
       console.error(e);
