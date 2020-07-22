@@ -2,9 +2,7 @@ import React from "react";
 import { render } from "react-dom";
 import { App } from "./components/App";
 
-// If you want to add custom plugins or presets, you can register them
-// at plugins-list.js
-
+// If we want to be able to easily replace a codesandbox template via Define API later...
 // const BABEL_CONFIG = require("!raw-loader!../config.json");
 // const BABEL_CONFIG2 = require("!raw-loader!../config2.json");
 // const SOURCE = require("!raw-loader!../source.js");
