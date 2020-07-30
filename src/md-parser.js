@@ -1,5 +1,5 @@
 import toc from 'markdown-toc';
-import fs from 'fs-extra';
+import fs from 'fs';
 
 
 /**
