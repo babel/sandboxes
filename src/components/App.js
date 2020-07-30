@@ -6,6 +6,7 @@ import styled, { css } from "styled-components";
 import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
+import UglyPopup from "./Popup";
 
 window.babel = Babel;
 
