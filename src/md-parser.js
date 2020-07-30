@@ -3,20 +3,44 @@ import fs from 'fs-extra';
 
 
 /**
- * Returns a Promise of JSON representing the markdown document
+ * Find the node and its parents from spec.json 
  * 
- * @param {string} path path to the markdown document
- * @returns {Promise<Object>} Parsed json object for spec.md
+ * @returns Array with the node and its parents
+ * @param {string} nodeType Babel AST node type
  */
 
-export const parseToJSON = async (path) => {
-  path = "src/spec.md";
+export const lookUpNodeType = (nodeType) => {
+  const path = "spec.json";
 
-  /* parse the markdown document into html */
-  const markdown = await fs.readFileSync(path, "utf-8");
+  const spec = JSON.parse(fs.readFileSync(path, "utf-8"));
+
+  const output = [];
+
+  const currentNode = spec[nodeType];
+
+  if (currentNode.parents.length !== 0)
+    currentNode.parents.forEach((nodeType) => {
+      output.push(spec[nodeType]);
+    });
+
+  output.push(currentNode);
+  return output;
+}
+
+/**
+ * Returns a JSON representing the markdown document
+ * 
+ * @param {string} path path to the markdown document
+ * @returns {Object} Parsed json object for spec.md
+ */
+
+export const parseToJSON = (path) => {
+  path = "spec.md";
+
+  const markdown = fs.readFileSync(path, "utf-8");
 
   /* parse the markdown document into JSON */
-  const content = await toc(markdown).json;
+  const content = toc(markdown).json;
 
   let result = parseToNested(content);
 
@@ -30,11 +54,13 @@ export const parseToJSON = async (path) => {
     result[line.replace(/#*/, '').trim()].chunk = chunk;
   });
 
+  /* comment result and uncomment the next two lines to generate output file */
+
   return result;
 
   // let data = JSON.stringify(result);
 
-  // fs.writeFileSync("output.json", data);
+  // fs.writeFileSync("spec.json", data);
 
 }
 
@@ -60,7 +86,7 @@ const parseToNested = (content) => {
         break;
       case 2:
         if (acc.lvl < v.lvl) {
-          v.parents = [acc.i];
+          v.parents = [acc.content];
         }
         else {
           v.parents = [acc.parents[0]]
@@ -69,10 +95,10 @@ const parseToNested = (content) => {
       case 3:
         if (acc.lvl == 1) {
           /* babelparser-babylon-v7 element */
-          v.parents = [acc.i, acc.i];
+          v.parents = [acc.content, acc.content];
         }
         else if (acc.lvl < v.lvl) {
-          v.parents = [acc.parents[0], acc.i];
+          v.parents = [acc.parents[0], acc.content];
         }
         else {
           v.parents = [acc.parents[0], acc.parents[1]];
@@ -80,7 +106,7 @@ const parseToNested = (content) => {
         break;
       case 4:
         if (acc.lvl < v.lvl) {
-          v.parents = [acc.parents[0], acc.parents[1], acc.i];
+          v.parents = [acc.parents[0], acc.parents[1], acc.content];
         }
         else {
           v.parents = acc.parents;
