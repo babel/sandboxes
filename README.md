@@ -12,8 +12,6 @@ To start the server, visit [babel-sandbox-server](https://github.com/MLH-Fellows
 ```
 /public 	
 /src 
-	/components 				
-	/reducers
+	/components
 	/helpers
 ```
-
