@@ -7,14 +7,6 @@ import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 
-import store from "../store.js";
-import {
-  ConfigType,
-  PluginType,
-  SourceType,
-  EditorAdded,
-} from "../reduxHelpers.js";
-
 window.babel = Babel;
 
 function CompiledOutput({
@@ -122,36 +114,6 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
     gzipSize(debouncedSource).then((s) => setGzip(s));
   }, [debouncedSource]);
 
-  // Once the component mounts, add all the default
-  // editors.
-  useEffect(() => {
-    store.dispatch({
-      type: EditorAdded,
-      payload: {
-        type: SourceType,
-        body: defaultSource,
-      },
-    });
-
-    store.dispatch({
-      type: EditorAdded,
-      payload: {
-        type: PluginType,
-        body: defCustomPlugin,
-      },
-    });
-
-    defaultBabelConfig.forEach((config) => {
-      store.dispatch({
-        type: EditorAdded,
-        payload: {
-          type: ConfigType,
-          body: JSON.stringify(config),
-        },
-      });
-    });
-  }, [defaultSource, defCustomPlugin, defaultBabelConfig]);
-
   return (
     <Root>
       <Section>
@@ -169,20 +131,9 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
           <button
             onClick={() =>
               setBabelConfig((configs) => {
-                // When we add a new config editor
-                // make sure to push it to the store.
-                store.dispatch({
-                  type: EditorAdded,
-                  payload: {
-                    type: ConfigType,
-                    body: configs[configs.length - 1],
-                  },
-                });
-                return [
-                  ...configs,
-                  configs[configs.length - 1],
-                ];
-              })}
+                return [...configs, configs[configs.length - 1]];
+              })
+            }
           >
             Add New Config
           </button>
