@@ -1,3 +1,8 @@
+/*
+Usage:
+<UglyPopup def="SwitchCase"></UglyPopup>
+*/
+
 import React from "react";
 import spec from '../spec.json';
 import ReactMarkdown from "react-markdown";

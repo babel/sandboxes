@@ -222,8 +222,6 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         )}
         {/* output code and config section*/}
         {results}
-
-          <UglyPopup def="SwitchCase"></UglyPopup>
       </Section>
     </Root>
   );
