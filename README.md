@@ -10,8 +10,9 @@ To start the server, visit [babel-sandbox-server](https://github.com/MLH-Fellows
 
 ### Directory structure:
 ```
-/public 	
-/src 
-	/components
-	/helpers
+<big><pre>
+📂 [public](./public) # Supplemental assets or resources, or static files
+📂 [src](./src) # Source files
+├── 📂 [components](./src/components) 
+</pre></big>
 ```
