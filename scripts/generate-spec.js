@@ -1,32 +1,5 @@
-import toc from 'markdown-toc';
-import fs from 'fs';
-
-
-/**
- * Find the node and its parents from spec.json 
- * 
- * @returns Array with the node and its parents
- * @param {string} nodeType Babel AST node type
- */
-
-export const lookUpNodeType = (nodeType) => {
-  const path = "spec.json";
-
-  const spec = JSON.parse(fs.readFileSync(path, "utf-8"));
-
-  const output = [];
-
-  const currentNode = spec[nodeType];
-
-  if (currentNode.parents.length !== 0)
-    currentNode.parents.forEach((nodeType) => {
-      output.push(spec[nodeType]);
-    });
-
-  output.push(currentNode);
-  return output;
-}
-
+const toc = require('markdown-toc');
+const fs = require('fs');
 /**
  * Returns a JSON representing the markdown document
  * 
@@ -34,8 +7,8 @@ export const lookUpNodeType = (nodeType) => {
  * @returns {Object} Parsed json object for spec.md
  */
 
-export const parseToJSON = (path) => {
-  path = "spec.md";
+const parseToJSON = () => {
+  path = "scripts/spec-input.md";
 
   const markdown = fs.readFileSync(path, "utf-8");
 
@@ -54,13 +27,8 @@ export const parseToJSON = (path) => {
     result[line.replace(/#*/, '').trim()].chunk = chunk;
   });
 
-  /* comment result and uncomment the next two lines to generate output file */
-
-  return result;
-
-  // let data = JSON.stringify(result);
-
-  // fs.writeFileSync("spec.json", data);
+  let data = JSON.stringify(result);
+  fs.writeFileSync("./src/spec.json", data);
 
 }
 
@@ -119,3 +87,4 @@ const parseToNested = (content) => {
   }, initialValue);
   return result;
 }
+parseToJSON();

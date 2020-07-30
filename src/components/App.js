@@ -6,6 +6,7 @@ import styled, { css } from "styled-components";
 import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
+import UglyPopup from "./Popup"
 
 import store from "../store.js";
 import {
@@ -178,11 +179,9 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
                     body: configs[configs.length - 1],
                   },
                 });
-                return [
-                  ...configs,
-                  configs[configs.length - 1],
-                ];
-              })}
+                return [...configs, configs[configs.length - 1]];
+              })
+            }
           >
             Add New Config
           </button>
@@ -223,6 +222,8 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         )}
         {/* output code and config section*/}
         {results}
+
+          <UglyPopup def="SwitchCase"></UglyPopup>
       </Section>
     </Root>
   );
