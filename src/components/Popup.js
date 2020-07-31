@@ -4,7 +4,7 @@ Usage:
 */
 
 import React from "react";
-import spec from '../spec.json';
+import spec from "../spec.json";
 import ReactMarkdown from "react-markdown";
 
 /**
@@ -14,12 +14,12 @@ import ReactMarkdown from "react-markdown";
  * @param {string} nodeType Babel AST node type
  */
 
-export const lookUpNodeType = (nodeType) => {
+export const lookUpNodeType = nodeType => {
   const output = [];
   const currentNode = spec[nodeType];
 
   if (currentNode.parents.length !== 0)
-    currentNode.parents.forEach((nodeType) => {
+    currentNode.parents.forEach(nodeType => {
       output.push(spec[nodeType]);
     });
 
@@ -27,11 +27,10 @@ export const lookUpNodeType = (nodeType) => {
   return output;
 };
 
-// get the object array, generate a popup window appending 
+// get the object array, generate a popup window appending
 // several 'window' elements together
 
 export default class UglyPopup extends React.Component {
-  
   constructor() {
     super();
   }
@@ -41,7 +40,7 @@ export default class UglyPopup extends React.Component {
 
     return (
       <>
-        {nodeDefs.map((nodeDef) => (
+        {nodeDefs.map(nodeDef => (
           <div className="nodeDef" key={nodeDef.content}>
             <ReactMarkdown source={nodeDef.chunk} />
           </div>
@@ -49,5 +48,4 @@ export default class UglyPopup extends React.Component {
       </>
     );
   }
-  
 }
