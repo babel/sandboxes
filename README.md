@@ -14,3 +14,6 @@ To start the server, visit [babel-sandbox-server](https://github.com/MLH-Fellows
 📂 [src](./src) # Source files
 ├── 📂 [components](./src/components) 
 </pre></big>
+
+### Contributing:
+- Run `yarn lint DIRECTORY` before submitting a PR
