@@ -2,6 +2,9 @@ import React from "react";
 import { render } from "react-dom";
 import { App } from "./components/App";
 
+// css
+import 'semantic-ui-less/semantic.less'
+
 // If we want to be able to easily replace a codesandbox template via Define API later...
 // const BABEL_CONFIG = require("!raw-loader!../config.json");
 // const BABEL_CONFIG2 = require("!raw-loader!../config2.json");

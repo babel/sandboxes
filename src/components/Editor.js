@@ -4,14 +4,10 @@ import styled from "styled-components";
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const StyledEditor = styled(CodeMirror)`
-  position: relative;
-  height: 100%;
-
   .CodeMirror {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    margin: 4px;
+    background-color: #141618;
     height: inherit;
+    padding: 10px;
   }
 
   .CodeMirror-activeline-background {
