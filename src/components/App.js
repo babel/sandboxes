@@ -1,15 +1,21 @@
 import React, { useState, useCallback, useEffect } from "react";
 // import * as Babel from "@babel/standalone";
 import * as Babel from "@babel/core";
-import styled, { } from "styled-components";
+import styled from "styled-components";
 
 import { Editor } from "./Editor";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 import UglyPopup from "./Popup";
 
-import { Grid, Dropdown, Icon, Menu, Segment, Divider } from 'semantic-ui-react'
-
+import {
+  Grid,
+  Dropdown,
+  Icon,
+  Menu,
+  Segment,
+  Divider,
+} from "semantic-ui-react";
 
 window.babel = Babel;
 
@@ -30,7 +36,7 @@ function CompiledOutput({
         source,
         processOptions(config, debouncedPlugin)
       );
-      gzipSize(code).then((s) => setGzip(s));
+      gzipSize(code).then(s => setGzip(s));
       setCompiled({
         code,
         size: new Blob([code], { type: "text/plain" }).size,
@@ -46,22 +52,19 @@ function CompiledOutput({
   return (
     <Grid.Row>
       <Grid.Column width={16}>
-
-        <Menu attached='top' tabular inverted>
-          <Menu.Item>
-            plugin.js
-          </Menu.Item>
-          <Menu.Menu position='right'>
-            <Menu.Item >
+        <Menu attached="top" tabular inverted>
+          <Menu.Item>plugin.js</Menu.Item>
+          <Menu.Menu position="right">
+            <Menu.Item>
               {compiled?.size}b, {gzip}b
             </Menu.Item>
-            <Menu.Item onClick={removeConfig} >
-              <Icon name='close' size='' />
+            <Menu.Item onClick={removeConfig}>
+              <Icon name="close" size="" />
             </Menu.Item>
           </Menu.Menu>
         </Menu>
-        <Segment inverted attached='bottom'>
-          <Grid columns={2} relaxed='very'>
+        <Segment inverted attached="bottom">
+          <Grid columns={2} relaxed="very">
             <Grid.Column>
               <Wrapper>
                 <Config
@@ -86,7 +89,7 @@ function CompiledOutput({
             </Grid.Column>
           </Grid>
           <Divider vertical>
-            <Icon name='arrow right' />
+            <Icon name="arrow right" />
           </Divider>
         </Segment>
       </Grid.Column>
@@ -108,7 +111,7 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
   const debouncedSource = useDebounce(source, 125);
 
   const updateBabelConfig = useCallback((config, index) => {
-    setBabelConfig((configs) => {
+    setBabelConfig(configs => {
       const newConfigs = [...configs];
       newConfigs[index] = config;
 
@@ -116,8 +119,8 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
     });
   }, []);
 
-  const removeBabelConfig = useCallback((index) => {
-    setBabelConfig((configs) => configs.filter((c, i) => index !== i));
+  const removeBabelConfig = useCallback(index => {
+    setBabelConfig(configs => configs.filter((c, i) => index !== i));
   }, []);
 
   let results = babelConfig.map((config, index) => {
@@ -127,7 +130,7 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         customPlugin={enableCustomPlugin ? customPlugin : undefined}
         config={config}
         key={index}
-        onConfigChange={(config) => updateBabelConfig(config, index)}
+        onConfigChange={config => updateBabelConfig(config, index)}
         removeConfig={() => removeBabelConfig(index)}
       />
     );
@@ -136,37 +139,46 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
   useEffect(() => {
     let size = new Blob([debouncedSource], { type: "text/plain" }).size;
     setSize(size);
-    gzipSize(debouncedSource).then((s) => setGzip(s));
+    gzipSize(debouncedSource).then(s => setGzip(s));
   }, [debouncedSource]);
 
   return (
     <Root>
-      <Menu attached='top' inverted>
+      <Menu attached="top" inverted>
         <Menu.Item>
           <img src="https://d33wubrfki0l68.cloudfront.net/7a197cfe44548cc1a3f581152af70a3051e11671/78df8/img/babel.svg" />
         </Menu.Item>
-        <Dropdown item icon='wrench' simple>
+        <Dropdown item icon="wrench" simple>
           <Dropdown.Menu inverted>
-            <Dropdown.Item onClick={() => {
-              setSource("const hello = 'world';");
-            }}>Load Example</Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => {
+                setSource("const hello = 'world';");
+              }}
+            >
+              Load Example
+            </Dropdown.Item>
             <Dropdown.Item
               onClick={() =>
-                setBabelConfig((configs) => [
+                setBabelConfig(configs => [
                   ...configs,
                   configs[configs.length - 1],
                 ])
-              }>Add Config</Dropdown.Item>
+              }
+            >
+              Add Config
+            </Dropdown.Item>
             <Dropdown.Item>
-
-              <Icon name='dropdown' />
-              <span className='text'>Add Plugin</span>
+              <Icon name="dropdown" />
+              <span className="text">Add Plugin</span>
 
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => toggleCustomPlugin(!enableCustomPlugin)}>Custom</Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => toggleCustomPlugin(!enableCustomPlugin)}
+                >
+                  Custom
+                </Dropdown.Item>
                 <Dropdown.Item>Import</Dropdown.Item>
               </Dropdown.Menu>
-
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item>Save...</Dropdown.Item>
@@ -175,24 +187,21 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         </Dropdown>
       </Menu>
 
-      <Grid celled='internally'>
+      <Grid celled="internally">
         <Grid.Row>
-
           <Grid.Column width={16}>
-            <Menu attached='top' tabular inverted>
-              <Menu.Item>
-                input.js
-              </Menu.Item>
-              <Menu.Menu position='right'>
+            <Menu attached="top" tabular inverted>
+              <Menu.Item>input.js</Menu.Item>
+              <Menu.Menu position="right">
                 <Menu.Item>
                   {size}b, {gzip}b
-                  </Menu.Item>
+                </Menu.Item>
               </Menu.Menu>
             </Menu>
-            <Segment inverted attached='bottom'>
+            <Segment inverted attached="bottom">
               <Code
                 value={source}
-                onChange={(val) => setSource(val)}
+                onChange={val => setSource(val)}
                 docName="source.js"
               />
             </Segment>
@@ -201,21 +210,18 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         {enableCustomPlugin && (
           <Grid.Row>
             <Grid.Column width={16}>
-
-              <Menu attached='top' tabular inverted>
-                <Menu.Item>
-                  plugin.js
-                </Menu.Item>
-                <Menu.Menu position='right'>
+              <Menu attached="top" tabular inverted>
+                <Menu.Item>plugin.js</Menu.Item>
+                <Menu.Menu position="right">
                   <Menu.Item onClick={() => toggleCustomPlugin(false)}>
-                    <Icon name='close' />
+                    <Icon name="close" />
                   </Menu.Item>
                 </Menu.Menu>
               </Menu>
               <Wrapper>
                 <Code
                   value={customPlugin}
-                  onChange={(val) => setCustomPlugin(val)}
+                  onChange={val => setCustomPlugin(val)}
                   docName="plugin.js"
                 />
               </Wrapper>
@@ -224,8 +230,7 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         )}
         {results}
       </Grid>
-
-    </Root >
+    </Root>
   );
 };
 
@@ -248,15 +253,12 @@ function useDebounce(value, delay) {
 }
 
 // STYLES
-const Root = styled.div`
-`;
+const Root = styled.div``;
 
-const Wrapper = styled.div`
-`;
+const Wrapper = styled.div``;
 
 const Config = styled(Editor)`
   padding: 4px;
 `;
 
-const Code = styled(Editor)`
-`;
+const Code = styled(Editor)``;

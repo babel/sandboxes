@@ -1,7 +1,7 @@
-import 'codemirror/mode/javascript/javascript';
+import "codemirror/mode/javascript/javascript";
 import React from "react";
 import styled from "styled-components";
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import { Controlled as CodeMirror } from "react-codemirror2";
 
 const StyledEditor = styled(CodeMirror)`
   .CodeMirror {
@@ -28,10 +28,11 @@ export function Editor({ className, onChange, style, ...options }) {
       }}
       options={{
         scrollbarStyle: null,
-        theme: 'material',
+        theme: "material",
         ...options.config,
       }}
       style={style}
-      value={options.value} />
+      value={options.value}
+    />
   );
 }

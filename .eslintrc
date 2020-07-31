@@ -1,0 +1,8 @@
+{
+  "plugins": ["import", "prettier", "react"],
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}
