@@ -8,6 +8,7 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
+import REPLState from "../state/REPLState.js";
 
 import { Grid } from "semantic-ui-react";
 
@@ -25,6 +26,8 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
   const [size, setSize] = useState(null);
   const [gzip, setGzip] = useState(null);
   const debouncedSource = useDebounce(source, 125);
+  const [shareLink, setShareLink] = React.useState("");
+  const [showShareLink, setShowShareLink] = React.useState(false);
 
   const updateBabelConfig = useCallback((config, index) => {
     setBabelConfig(configs => {
@@ -54,6 +57,23 @@ export const App = ({ defaultSource, defaultBabelConfig, defCustomPlugin }) => {
         enableCustomPlugin={enableCustomPlugin}
       />
 
+      <button
+        onClick={async () => {
+          const state = new REPLState(
+            source,
+            enableCustomPlugin ? customPlugin : "",
+            babelConfig.map((config) => JSON.stringify(config))
+          );
+          const link = await state.Link();
+          setShareLink(link);
+          setShowShareLink(true);
+        }}
+      >
+        Share
+    </button>
+      {showShareLink && (
+        <input type="text" value={shareLink} readOnly></input>
+      )}
       <Grid celled="internally">
         <Input size={size} gzip={gzip} source={source} setSource={setSource} />
         {enableCustomPlugin && (
