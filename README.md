@@ -11,8 +11,18 @@ To start the server, visit [babel-sandbox-server](https://github.com/MLH-Fellows
 ### Directory structure:
 <big><pre>
 📂 [public](./public) # Supplemental assets or resources, or static files
+📂 [scripts](./scripts) # Small runnables (typically shell scripts) that perform routine tasks
 📂 [src](./src) # Source files
 ├── 📂 [components](./src/components) 
+├── 📂 [semantic-ui](./src/semantic-ui) 
+│   ├── 📂 [site](./src/semantic-ui/site) 
+│   │   ├── 📂 [collections](./src/semantic-ui/site/collections) 
+│   │   ├── 📂 [elements](./src/semantic-ui/site/elements) 
+│   │   ├── 📂 [globals](./src/semantic-ui/site/globals) 
+│   │   ├── 📂 [modules](./src/semantic-ui/site/modules) 
+│   │   ├── 📂 [views](./src/semantic-ui/site/views) 
+├── 📂 [state](./src/state) 
+├── 📂 [utils](./src/utils) 
 </pre></big>
 
 ### Contributing:
