@@ -1,18 +1,15 @@
-import * as Babel from "@babel/core";
+import * as Babel from "@babel/standalone";
 
 // take from @babel/standalone
-import {
-  presets as availablePresets,
-  plugins as availablePlugins,
-} from "./plugins-list";
+import {availablePlugins, availablePresets} from '@babel/standalone';
 
-export function transpilePlugin(pluginString) {
+export function transpilePlugin(pluginString, presets) {
   return Babel.transform(pluginString, {
     babelrc: false,
     configFile: false,
     ast: false,
     highlightCode: false,
-    presets: [availablePresets["@babel/preset-env"]],
+    presets: presets
   }).code;
 }
 
@@ -22,7 +19,7 @@ export default function compileModule(code, globals = {}) {
   let module = { exports };
   let globalNames = Object.keys(globals);
   let keys = ["module", "exports", ...globalNames];
-  let values = [module, exports, ...globalNames.map(key => globals[key])];
+  let values = [module, exports, ...globalNames.map((key) => globals[key])];
   // eslint-disable-next-line no-new-func
   new Function(keys.join(), code).apply(exports, values);
   return module.exports;
@@ -45,7 +42,7 @@ export function processOptions(options, customPlugin) {
   if (typeof options === "string") options = JSON.parse(options);
 
   // Parse preset names
-  const presets = (options.presets || []).map(presetName => {
+  const presets = (options.presets || []).map((presetName) => {
     const preset = loadBuiltin(availablePresets, presetName);
 
     if (preset) {
@@ -68,7 +65,7 @@ export function processOptions(options, customPlugin) {
   });
 
   // Parse plugin names
-  const plugins = (options.plugins || []).map(pluginName => {
+  const plugins = (options.plugins || []).map((pluginName) => {
     const plugin = loadBuiltin(availablePlugins, pluginName);
 
     if (!plugin) {
@@ -80,7 +77,7 @@ export function processOptions(options, customPlugin) {
   });
 
   if (customPlugin) {
-    customPlugin = transpilePlugin(customPlugin);
+    customPlugin = transpilePlugin(customPlugin, presets);
     plugins.unshift(compileModule(customPlugin));
   }
 

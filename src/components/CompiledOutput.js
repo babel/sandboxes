@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import * as Babel from "@babel/core";
+import * as Babel from "@babel/standalone";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
+
+import {
+  convertToBabelConfig,
+  //   importDefaultPlugins,
+  //   registerDefaultPlugins
+} from "./App";
+
+import { plugins, presets } from "../plugins-list";
 
 import { Grid, Icon, Menu, Segment, Divider } from "semantic-ui-react";
 
@@ -18,11 +26,14 @@ export function CompiledOutput({
   const [gzip, setGzip] = useState(null);
   const debouncedPlugin = useDebounce(customPlugin, 125);
 
+  const [configVisible, setConfigVisible] = useState(false);
+  const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
+
   useEffect(() => {
     try {
       const { code } = Babel.transform(
         source,
-        processOptions(config, debouncedPlugin)
+        processOptions(babelConfig, debouncedPlugin)
       );
       gzipSize(code).then(s => setGzip(s));
       setCompiled({
@@ -35,7 +46,75 @@ export function CompiledOutput({
         error: true,
       });
     }
-  }, [source, config, debouncedPlugin]);
+  }, [source, babelConfig, debouncedPlugin]);
+
+  function displayAvailablePlugins() {
+    return Object.keys(plugins).map(pluginName => {
+      const plugin = plugins[pluginName];
+      return (
+        <div className="ui checkbox">
+            <input
+              name={pluginName}
+              type="checkbox"
+              onChange={handlePluginChange}
+            />
+            <label>{plugin.name}</label>
+        </div>
+      );
+    });
+  }
+
+  function displayAvailablePresets() {
+    return Object.keys(presets).map(presetName => {
+      const preset = presets[presetName];
+      return (
+        <div className="ui checkbox">
+          <input
+            name={presetName}
+            type="checkbox"
+            onChange={handlePresetChange}
+          />
+          <label>{presetName}</label>
+        </div>
+      );
+    });
+  }
+
+  function toggleConfigVisible() {
+    setConfigVisible(!configVisible);
+  }
+
+  function handlePluginChange(event) {
+    const checkbox = event.target;
+    if (checkbox.checked) {
+      config.plugins.push(plugins[checkbox.name]);
+      onConfigChange(config);
+      setBabelConfig(convertToBabelConfig(config));
+    } else {
+      config.plugins = config.plugins.filter(plugin => {
+        return plugin.name !== checkbox.name;
+      });
+      onConfigChange(config);
+      setBabelConfig(convertToBabelConfig(config));
+    }
+    console.log(config);
+    console.log(babelConfig);
+  }
+
+  function handlePresetChange(event) {
+    const checkbox = event.target;
+    if (checkbox.checked) {
+      config.presets.push(presets[checkbox.name]);
+      onConfigChange(config);
+      setBabelConfig(convertToBabelConfig(config));
+    } else {
+      config.presets = config.presets.filter(preset => {
+        return preset.name !== checkbox.name;
+      });
+      onConfigChange(config);
+      setBabelConfig(convertToBabelConfig(config));
+    }
+  }
 
   return (
     <Grid.Row>
@@ -54,12 +133,14 @@ export function CompiledOutput({
         <Segment inverted attached="bottom">
           <Grid columns={2} relaxed="very">
             <Grid.Column>
+              {displayAvailablePlugins()}
+              {displayAvailablePresets()}
               <Wrapper>
                 <Config
                   value={
-                    config === Object(config)
-                      ? JSON.stringify(config, null, "\t")
-                      : config
+                    babelConfig === Object(babelConfig)
+                      ? JSON.stringify(babelConfig, null, "\t")
+                      : babelConfig
                   }
                   onChange={onConfigChange}
                   docName="config.json"
