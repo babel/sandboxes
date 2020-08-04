@@ -11,7 +11,7 @@ import { useDebounce } from "../utils/useDebounce";
 import REPLState from "../state/REPLState.js";
 
 import { Grid } from "semantic-ui-react";
-import {plugins} from "../plugins-list";
+import { plugins } from "../plugins-list";
 
 window.babel = Babel;
 
@@ -20,14 +20,14 @@ window.babel = Babel;
  * @param {Object} jsonConfig 
  */
 export function convertToBabelConfig(jsonConfig) {
-  let result = {plugins: [], presets: []};
+  let result = { plugins: [], presets: [] };
   result.plugins = jsonConfig.plugins?.map(plugin => [plugin.name, plugin.defaultConfig]);
   result.presets = jsonConfig.presets?.map(preset => [preset.name, preset.defaultConfig]);
   return result;
 }
 
 export function convertToJsonConfig(babelConfig) {
-  let result = {plugins: [], presets: []}
+  let result = { plugins: [], presets: [] }
   result.plugins = babelConfig.plugins?.map((plugin) => {
     return {
       name: plugin[0],
@@ -75,7 +75,7 @@ function registerDefaultPlugins() {
 
 export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   const [source, setSource] = React.useState(defaultSource);
-  const [enableCustomPlugin, toggleCustomPlugin] = React.useState(true);
+  const [enableCustomPlugin, toggleCustomPlugin] = React.useState(false);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
   const [jsonConfig, setJsonConfig] = useState(
     Array.isArray(defaultConfig)

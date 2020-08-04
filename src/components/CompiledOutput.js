@@ -13,7 +13,7 @@ import {
 
 import { plugins, presets } from "../plugins-list";
 
-import { Grid, Icon, Menu, Segment, Divider } from "semantic-ui-react";
+import { Grid, Icon, Menu, Segment, Divider, Checkbox } from "semantic-ui-react";
 
 export function CompiledOutput({
   source,
@@ -51,7 +51,17 @@ export function CompiledOutput({
   function displayAvailablePlugins() {
     return Object.keys(plugins).map(pluginName => {
       const plugin = plugins[pluginName];
+
       return (
+<<<<<<< HEAD
+        <Segment>
+          <Checkbox toggle
+            name={pluginName}
+            type="checkbox"
+            onChange={handlePluginChange}
+            label={pluginName} />
+        </Segment>
+=======
         <div className="ui checkbox" key={pluginName}>
           <input
             name={pluginName}
@@ -60,6 +70,7 @@ export function CompiledOutput({
           />
           <label>{plugin.name}</label>
         </div>
+>>>>>>> master
       );
     });
   }
@@ -68,6 +79,14 @@ export function CompiledOutput({
     return Object.keys(presets).map(presetName => {
       const preset = presets[presetName];
       return (
+<<<<<<< HEAD
+        <Segment><Checkbox toggle
+          name={presetName}
+          type="checkbox"
+          onChange={handlePresetChange}
+          label={presetName} />
+        </Segment>
+=======
         <div className="ui checkbox" key={presetName}>
           <input
             name={presetName}
@@ -76,6 +95,7 @@ export function CompiledOutput({
           />
           <label>{presetName}</label>
         </div>
+>>>>>>> master
       );
     });
   }
@@ -84,8 +104,7 @@ export function CompiledOutput({
     setConfigVisible(!configVisible);
   }
 
-  function handlePluginChange(event) {
-    const checkbox = event.target;
+  function handlePluginChange(reactEvent, checkbox) {
     if (checkbox.checked) {
       config.plugins.push(plugins[checkbox.name]);
       onConfigChange(config);
@@ -101,8 +120,7 @@ export function CompiledOutput({
     console.log(babelConfig);
   }
 
-  function handlePresetChange(event) {
-    const checkbox = event.target;
+  function handlePresetChange(reactEvent, checkbox) {
     if (checkbox.checked) {
       config.presets.push(presets[checkbox.name]);
       onConfigChange(config);
@@ -120,7 +138,7 @@ export function CompiledOutput({
     <Grid.Row>
       <Grid.Column width={16}>
         <Menu attached="top" tabular inverted>
-          <Menu.Item>plugin.js</Menu.Item>
+          <Menu.Item>input.json</Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item>
               {compiled?.size}b, {gzip}b
@@ -133,8 +151,12 @@ export function CompiledOutput({
         <Segment inverted attached="bottom">
           <Grid columns={2} relaxed="very">
             <Grid.Column>
-              {displayAvailablePlugins()}
-              {displayAvailablePresets()}
+              <Segment.Group piled>
+                {displayAvailablePlugins()}
+              </Segment.Group>
+              <Segment.Group piled>
+                {displayAvailablePresets()}
+              </Segment.Group>
               <Wrapper>
                 <Config
                   value={
