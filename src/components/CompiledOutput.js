@@ -52,13 +52,13 @@ export function CompiledOutput({
     return Object.keys(plugins).map(pluginName => {
       const plugin = plugins[pluginName];
       return (
-        <div className="ui checkbox">
-            <input
-              name={pluginName}
-              type="checkbox"
-              onChange={handlePluginChange}
-            />
-            <label>{plugin.name}</label>
+        <div className="ui checkbox" key={pluginName}>
+          <input
+            name={pluginName}
+            type="checkbox"
+            onChange={handlePluginChange}
+          />
+          <label>{plugin.name}</label>
         </div>
       );
     });
@@ -68,7 +68,7 @@ export function CompiledOutput({
     return Object.keys(presets).map(presetName => {
       const preset = presets[presetName];
       return (
-        <div className="ui checkbox">
+        <div className="ui checkbox" key={presetName}>
           <input
             name={presetName}
             type="checkbox"
@@ -126,7 +126,7 @@ export function CompiledOutput({
               {compiled?.size}b, {gzip}b
             </Menu.Item>
             <Menu.Item onClick={removeConfig}>
-              <Icon name="close" size="" />
+              <Icon name="close" />
             </Menu.Item>
           </Menu.Menu>
         </Menu>
