@@ -5,6 +5,8 @@ import { gzipSize } from "../gzip";
 import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
 
+import Popup from "./Popup"
+
 import {
   convertToBabelConfig,
   //   importDefaultPlugins,
@@ -162,6 +164,7 @@ export function CompiledOutput({
           </Divider>
         </Segment>
       </Grid.Column>
+      <Popup def="SwitchCase"></Popup>
     </Grid.Row>
   );
 }

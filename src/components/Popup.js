@@ -6,6 +6,7 @@ Usage:
 import React from "react";
 import spec from "../spec.json";
 import ReactMarkdown from "react-markdown";
+import { Segment } from "semantic-ui-react";
 
 /**
  * Find the node and its parents from spec.json
@@ -30,7 +31,7 @@ export const lookUpNodeType = nodeType => {
 // get the object array, generate a popup window appending
 // several 'window' elements together
 
-export default class UglyPopup extends React.Component {
+export default class Popup extends React.Component {
   constructor() {
     super();
   }
@@ -39,13 +40,13 @@ export default class UglyPopup extends React.Component {
     let nodeDefs = lookUpNodeType(this.props.def);
 
     return (
-      <>
+      <Segment>
         {nodeDefs.map(nodeDef => (
           <div className="nodeDef" key={nodeDef.content}>
             <ReactMarkdown source={nodeDef.chunk} />
           </div>
         ))}
-      </>
+      </Segment>
     );
   }
 }
