@@ -2,3 +2,5 @@ node_modules
 
 # IDE files
 .vscode
+
+package-lock.json
