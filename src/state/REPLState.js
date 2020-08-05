@@ -67,7 +67,6 @@ class REPLState {
       configs: this.configs.map(configSrc => {
         return encodeToBase64(configSrc);
       }),
-      forkId: encodeToBase64(this.forkId),
     });
   }
 
@@ -84,7 +83,6 @@ class REPLState {
       jsonState.configIDs.map(configs => {
         return decodeBase64(configs);
       }),
-      decodeBase64(jsonState)
     );
   }
 
