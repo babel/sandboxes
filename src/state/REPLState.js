@@ -62,28 +62,10 @@ class REPLState {
     return JSON.stringify({
       source: encodeToBase64(this.jsSource),
       plugin: encodeToBase64(this.pluginSource),
-      configs: this.configs.map((configSrc) => {
+      configs: this.configs.map(configSrc => {
         return encodeToBase64(configSrc);
       }),
     });
-  }
-
-  /**
-   * Link gets the sharing the sharing link
-   * for the given REPL state.
-   * @returns {Promise<string>} String URL.
-   */
-  async Link() {
-    const url = "http://localhost:1337/api/v1/blobs/create";
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: this.Encode(),
-    });
-    return resp.text();
   }
 
   /**
@@ -94,12 +76,57 @@ class REPLState {
   static Decode(encodedState) {
     let jsonState = JSON.parse(encodedState);
     return new REPLState(
-      decodeBase64(jsonState.source),
-      decodeBase64(jsonState.plugin),
-      jsonState.configs.map((configs) => {
+      decodeBase64(jsonState.base64SourceKey),
+      decodeBase64(jsonState.base64PluginKey),
+      jsonState.configIDs.map(configs => {
         return decodeBase64(configs);
       })
     );
+  }
+
+  /**
+   * Link gets the sharing the sharing link
+   * for the given REPL state.
+   * @returns {Promise<string>} String URL.
+   */
+  async Link() {
+    const url = `/api/v1/blobs/create`;
+    try {
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: this.Encode(),
+      });
+      const message = await resp.json();
+
+      // https://stackoverflow.com/questions/6941533/get-protocol-domain-and-port-from-url
+      return (
+        window.location.href.split("/").slice(0, 3).join("/") + message.url
+      );
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  /**
+   * REPLState.FromID returns a REPLState given a unique identifier.
+   * @param {string} ID
+   * @returns {Promise<REPLState | null>}
+   */
+  static async FromID(ID) {
+    const url = `/api/v1/blobs/${ID}`;
+    try {
+      const resp = await fetch(url);
+      const text = await resp.text();
+      return REPLState.Decode(text);
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
   }
 }
 

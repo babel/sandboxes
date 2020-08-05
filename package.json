@@ -2,6 +2,7 @@
   "name": "babel-sandboxes",
   "version": "1.0.0",
   "description": "",
+  "proxy": "http://localhost:3005",
   "dependencies": {
     "@babel/core": "~7.10.0",
     "@babel/plugin-external-helpers": "~7.10.0",
