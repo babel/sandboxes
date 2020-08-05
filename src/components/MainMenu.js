@@ -1,16 +1,26 @@
 import React from "react";
 import { Dropdown, Icon, Menu } from "semantic-ui-react";
+import REPLState from "../state/REPLState.js";
+import { ShareModal } from "./ShareModal";
 
 export function MainMenu({
+  source,
   setSource,
+  jsonConfig,
   setBabelConfig,
+  customPlugin,
   toggleCustomPlugin,
   enableCustomPlugin,
 }) {
+  const [shareLink, setShareLink] = React.useState("");
+  const [showShareLink, setShowShareLink] = React.useState(false);
   return (
     <Menu attached="top" inverted>
       <Menu.Item>
-        <img src="https://d33wubrfki0l68.cloudfront.net/7a197cfe44548cc1a3f581152af70a3051e11671/78df8/img/babel.svg" alt="Babel Logo" />
+        <img
+          src="https://d33wubrfki0l68.cloudfront.net/7a197cfe44548cc1a3f581152af70a3051e11671/78df8/img/babel.svg"
+          alt="Babel Logo"
+        />
       </Menu.Item>
       <Dropdown item icon="wrench" simple>
         <Dropdown.Menu>
@@ -46,7 +56,25 @@ export function MainMenu({
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item>Save...</Dropdown.Item>
-          <Dropdown.Item>Share</Dropdown.Item>
+          <ShareModal
+            shareLink={shareLink}
+            trigger={
+              <Dropdown.Item
+                onClick={async () => {
+                  const state = new REPLState(
+                    source,
+                    enableCustomPlugin ? customPlugin : "",
+                    jsonConfig.map(config => JSON.stringify(config))
+                  );
+                  const link = await state.Link();
+                  setShareLink(link);
+                  setShowShareLink(true);
+                }}
+              >
+                Share
+              </Dropdown.Item>
+            }
+          />
         </Dropdown.Menu>
       </Dropdown>
     </Menu>

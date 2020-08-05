@@ -8,27 +8,32 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
-import REPLState from "../state/REPLState.js";
 
 import { Grid } from "semantic-ui-react";
-import {plugins} from "../plugins-list";
+import { plugins } from "../plugins-list";
 
 window.babel = Babel;
 
 /**
  * Converts internal json plugin/preset config to babel form
- * @param {Object} jsonConfig 
+ * @param {Object} jsonConfig
  */
 export function convertToBabelConfig(jsonConfig) {
-  let result = {plugins: [], presets: []};
-  result.plugins = jsonConfig.plugins?.map(plugin => [plugin.name, plugin.defaultConfig]);
-  result.presets = jsonConfig.presets?.map(preset => [preset.name, preset.defaultConfig]);
+  let result = { plugins: [], presets: [] };
+  result.plugins = jsonConfig.plugins?.map(plugin => [
+    plugin.name,
+    plugin.defaultConfig,
+  ]);
+  result.presets = jsonConfig.presets?.map(preset => [
+    preset.name,
+    preset.defaultConfig,
+  ]);
   return result;
 }
 
 export function convertToJsonConfig(babelConfig) {
-  let result = {plugins: [], presets: []}
-  result.plugins = babelConfig.plugins?.map((plugin) => {
+  let result = { plugins: [], presets: [] };
+  result.plugins = babelConfig.plugins?.map(plugin => {
     return {
       name: plugin[0],
       description: plugins[plugin[0]].description,
@@ -45,7 +50,6 @@ function importDefaultPlugins() {
     script.async = false;
     document.head.appendChild(script);
   });
-  console.log(window);
 }
 
 function registerDefaultPlugins() {
@@ -71,25 +75,19 @@ function registerDefaultPlugins() {
   );
 }
 
-
-
 export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   const [source, setSource] = React.useState(defaultSource);
-  const [enableCustomPlugin, toggleCustomPlugin] = React.useState(true);
+  const [enableCustomPlugin, toggleCustomPlugin] = React.useState(false);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
   const [jsonConfig, setJsonConfig] = useState(
-    Array.isArray(defaultConfig)
-      ? defaultConfig
-      : [defaultConfig]
+    Array.isArray(defaultConfig) ? defaultConfig : [defaultConfig]
   );
   const [size, setSize] = useState(null);
   const [gzip, setGzip] = useState(null);
   const debouncedSource = useDebounce(source, 125);
-  const [shareLink, setShareLink] = React.useState("");
-  const [showShareLink, setShowShareLink] = React.useState(false);
 
   const updateBabelConfig = useCallback((config, index) => {
-    setJsonConfig((configs) => {
+    setJsonConfig(configs => {
       const newConfigs = [...configs];
       newConfigs[index] = config;
 
@@ -97,8 +95,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
     });
   }, []);
 
-  const removeBabelConfig = useCallback((index) => {
-    setJsonConfig((configs) => configs.filter((c, i) => index !== i));
+  const removeBabelConfig = useCallback(index => {
+    setJsonConfig(configs => configs.filter((c, i) => index !== i));
   }, []);
 
   useEffect(() => {
@@ -113,29 +111,15 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   return (
     <Root>
       <MainMenu
+        source={source}
         setSource={setSource}
+        jsonConfig={jsonConfig}
         setBabelConfig={setJsonConfig}
+        customPlugin={customPlugin}
         toggleCustomPlugin={toggleCustomPlugin}
         enableCustomPlugin={enableCustomPlugin}
       />
 
-      <button
-        onClick={async () => {
-          const state = new REPLState(
-            source,
-            enableCustomPlugin ? customPlugin : "",
-            jsonConfig.map((config) => JSON.stringify(config))
-          );
-          const link = await state.Link();
-          setShareLink(link);
-          setShowShareLink(true);
-        }}
-      >
-        Share
-    </button>
-      {showShareLink && (
-        <input type="text" value={shareLink} readOnly></input>
-      )}
       <Grid celled="internally">
         <Input size={size} gzip={gzip} source={source} setSource={setSource} />
         {enableCustomPlugin && (
