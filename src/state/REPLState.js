@@ -46,11 +46,13 @@ class REPLState {
    * @param {string} jsSource
    * @param {string} pluginSource
    * @param {string[]} configs
+   * @param {string} forkId
    */
-  constructor(jsSource, pluginSource, configs) {
+  constructor(jsSource, pluginSource, configs, forkId) {
     this.jsSource = jsSource;
     this.pluginSource = pluginSource;
     this.configs = configs;
+    this.forkId = forkId;
   }
 
   /**
@@ -65,6 +67,7 @@ class REPLState {
       configs: this.configs.map(configSrc => {
         return encodeToBase64(configSrc);
       }),
+      forkId: encodeToBase64(this.forkId),
     });
   }
 
@@ -80,7 +83,8 @@ class REPLState {
       decodeBase64(jsonState.base64PluginKey),
       jsonState.configIDs.map(configs => {
         return decodeBase64(configs);
-      })
+      }),
+      decodeBase64(jsonState)
     );
   }
 

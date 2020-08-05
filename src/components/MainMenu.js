@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, Icon, Menu } from "semantic-ui-react";
+import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
 import { ShareModal } from "./ShareModal";
 
@@ -77,6 +77,27 @@ export function MainMenu({
           />
         </Dropdown.Menu>
       </Dropdown>
+      <Menu.Item>
+        <Button as="div" labelPosition="right">
+          <Button
+            icon
+            onClick={() => {
+              forkRepo();
+            }}
+          >
+            <Icon name="fork" />
+          </Button>
+          <Label
+            as="a"
+            basic
+            onClick={() => {
+              listForks();
+            }}
+          >
+            2,048
+          </Label>
+        </Button>
+      </Menu.Item>
     </Menu>
   );
 }
