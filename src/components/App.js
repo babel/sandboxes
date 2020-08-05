@@ -8,7 +8,6 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
-import { REPLState } from "../state";
 
 import { Grid } from "semantic-ui-react";
 import { plugins } from "../plugins-list";
@@ -21,7 +20,6 @@ window.babel = Babel;
  */
 export function convertToBabelConfig(jsonConfig) {
   let result = { plugins: [], presets: [] };
-<<<<<<< HEAD
   result.plugins = jsonConfig.plugins?.map(plugin => [
     plugin.name,
     plugin.defaultConfig,
@@ -30,21 +28,12 @@ export function convertToBabelConfig(jsonConfig) {
     preset.name,
     preset.defaultConfig,
   ]);
-=======
-  result.plugins = jsonConfig.plugins?.map(plugin => [plugin.name, plugin.defaultConfig]);
-  result.presets = jsonConfig.presets?.map(preset => [preset.name, preset.defaultConfig]);
->>>>>>> master
   return result;
 }
 
 export function convertToJsonConfig(babelConfig) {
-<<<<<<< HEAD
   let result = { plugins: [], presets: [] };
   result.plugins = babelConfig.plugins?.map(plugin => {
-=======
-  let result = { plugins: [], presets: [] }
-  result.plugins = babelConfig.plugins?.map((plugin) => {
->>>>>>> master
     return {
       name: plugin[0],
       description: plugins[plugin[0]].description,
@@ -61,7 +50,6 @@ function importDefaultPlugins() {
     script.async = false;
     document.head.appendChild(script);
   });
-  console.log(window);
 }
 
 function registerDefaultPlugins() {
@@ -97,8 +85,6 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   const [size, setSize] = useState(null);
   const [gzip, setGzip] = useState(null);
   const debouncedSource = useDebounce(source, 125);
-  const [shareLink, setShareLink] = React.useState("");
-  const [showShareLink, setShowShareLink] = React.useState(false);
 
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
@@ -125,28 +111,15 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   return (
     <Root>
       <MainMenu
+        source={source}
         setSource={setSource}
+        jsonConfig={jsonConfig}
         setBabelConfig={setJsonConfig}
+        customPlugin={customPlugin}
         toggleCustomPlugin={toggleCustomPlugin}
         enableCustomPlugin={enableCustomPlugin}
       />
 
-      <button
-        onClick={async () => {
-          const state = new REPLState(
-            source,
-            enableCustomPlugin ? customPlugin : "",
-            jsonConfig.map(config => JSON.stringify(config))
-          );
-          const link = await state.Link();
-
-          setShareLink(link);
-          setShowShareLink(true);
-        }}
-      >
-        Share
-      </button>
-      {showShareLink && <input type="text" value={shareLink} readOnly></input>}
       <Grid celled="internally">
         <Input size={size} gzip={gzip} source={source} setSource={setSource} />
         {enableCustomPlugin && (
