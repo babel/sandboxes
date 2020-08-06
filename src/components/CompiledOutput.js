@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import * as Babel from "@babel/standalone";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
@@ -14,7 +14,7 @@ import {
 
 import { plugins, presets } from "../plugins-list";
 
-import { Grid, Icon, Menu, Segment, Divider, Checkbox } from "semantic-ui-react";
+import { Grid, Icon, Menu, Segment, Divider, Checkbox, Card } from "semantic-ui-react";
 
 export function CompiledOutput({
   source,
@@ -30,14 +30,16 @@ export function CompiledOutput({
   const [configVisible, setConfigVisible] = useState(false);
   const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
+  const [astTimeTravel, setAstTimeTravel] = useState(null);
+
   console.log(babelConfig)
   const transitions = new Transition()
-  console.log(transitions.getValue())
+  /* console.log(transitions.getValue())
   transitions.addExitTransition(compiled)
 
-  const arr = transitions.getValue()
+  const arr = transitions.getValue() */
 
-
+  console.log(astTimeTravel)
 
   useEffect(() => {
     try {
@@ -47,8 +49,9 @@ export function CompiledOutput({
       let options = processOptions(babelConfig, debouncedPlugin);
 
       options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
-
-      console.log('babel', Babel, source)
+      // console.log(transitions._transitions)
+      //console.log('babel', Babel, source)
+      setAstTimeTravel(transitions.getValue());
 
       const { code } = Babel.transform(
         source,
@@ -56,6 +59,7 @@ export function CompiledOutput({
       );
 
       gzipSize(code).then(s => setGzip(s));
+      // console.log(transitions.getValue())
 
       setCompiled({
         code,
@@ -135,55 +139,84 @@ export function CompiledOutput({
   }
 
   return (
-    <Grid.Row>
-      <Grid.Column width={16}>
-        <Menu attached="top" tabular inverted>
-          <Menu.Item>input.json</Menu.Item>
-          <Menu.Menu position="right">
-            <Menu.Item>
-              {compiled?.size}b, {gzip}b
+    <Fragment>
+      <Grid.Row>
+        <Grid.Column width={16}>
+          <Menu attached="top" tabular inverted>
+            <Menu.Item>input.json</Menu.Item>
+            <Menu.Menu position="right">
+              <Menu.Item>
+                {compiled ?.size}b, {gzip}b
             </Menu.Item>
-            <Menu.Item onClick={removeConfig}>
-              <Icon name="close" />
-            </Menu.Item>
-          </Menu.Menu>
-        </Menu>
-        <Segment inverted attached="bottom">
-          <Grid columns={2} relaxed="very">
-            <Grid.Column>
-              <Segment.Group piled>
-                {displayAvailablePlugins()}
-              </Segment.Group>
-              <Segment.Group piled>
-                {displayAvailablePresets()}
-              </Segment.Group>
-              <Wrapper>
-                <Config
-                  value={
-                    babelConfig === Object(babelConfig)
-                      ? JSON.stringify(babelConfig, null, "\t")
-                      : babelConfig
-                  }
-                  onChange={onConfigChange}
-                  docName="config.json"
-                  config={{ mode: "application/json" }}
+              <Menu.Item onClick={removeConfig}>
+                <Icon name="close" />
+              </Menu.Item>
+            </Menu.Menu>
+          </Menu>
+          <Segment inverted attached="bottom">
+            <Grid columns={2} relaxed="very">
+              <Grid.Column>
+                <Segment.Group piled>
+                  {displayAvailablePlugins()}
+                </Segment.Group>
+                <Segment.Group piled>
+                  {displayAvailablePresets()}
+                </Segment.Group>
+                <Wrapper>
+                  <Config
+                    value={
+                      babelConfig === Object(babelConfig)
+                        ? JSON.stringify(babelConfig, null, "\t")
+                        : babelConfig
+                    }
+                    onChange={onConfigChange}
+                    docName="config.json"
+                    config={{ mode: "application/json" }}
+                  />
+                </Wrapper>
+              </Grid.Column>
+              <Grid.Column>
+                <Code
+                  value={compiled ?.code ?? ""}
+                  docName="result.js"
+                  config={{ readOnly: true, lineWrapping: true }}
+                  isError={compiled ?.error ?? false}
                 />
-              </Wrapper>
-            </Grid.Column>
-            <Grid.Column>
-              <Code
-                value={compiled?.code ?? ""}
-                docName="result.js"
-                config={{ readOnly: true, lineWrapping: true }}
-                isError={compiled?.error ?? false}
-              />
-            </Grid.Column>
-          </Grid>
-          <Divider vertical>
-            <Icon name="arrow right" />
-          </Divider>
-        </Segment>
-      </Grid.Column>
-    </Grid.Row>
+              </Grid.Column>
+            </Grid>
+            <Divider vertical>
+              <Icon name="arrow right" />
+            </Divider>
+          </Segment>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column width={16}>
+          <Menu attached="top" tabular inverted>
+            <Menu.Item>Time Travel</Menu.Item>
+            <Menu.Menu position="right">
+              <Menu.Item onClick={removeConfig}>
+                <Icon name="close" />
+              </Menu.Item>
+            </Menu.Menu>
+          </Menu>
+          <Segment inverted attached="bottom">
+            {astTimeTravel !== null ? (
+              <Fragment>
+                <Card.Group>
+                  {astTimeTravel.map(timetravel => (
+                    <Card
+                      header={`${timetravel.currentNode}`}
+                      meta={`${timetravel.pluginAlias} | visitorType: ${timetravel.visitorType}`}
+                      description={`${timetravel.code}`}
+                    />
+                  ))}
+                </Card.Group>
+              </Fragment>
+            ) : null}
+          </Segment>
+        </Grid.Column>
+      </Grid.Row>
+    </Fragment>
   );
 }
