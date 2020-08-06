@@ -75,10 +75,11 @@ function registerDefaultPlugins() {
   );
 }
 
-export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
+export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }) => {
   const [source, setSource] = React.useState(defaultSource);
   const [enableCustomPlugin, toggleCustomPlugin] = React.useState(false);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
+  const [id, setId] = useState(defaultId);
   const [jsonConfig, setJsonConfig] = useState(
     Array.isArray(defaultConfig) ? defaultConfig : [defaultConfig]
   );
@@ -118,6 +119,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
         customPlugin={customPlugin}
         toggleCustomPlugin={toggleCustomPlugin}
         enableCustomPlugin={enableCustomPlugin}
+        id={id}
+        setId={setId}
       />
 
       <Grid celled="internally">

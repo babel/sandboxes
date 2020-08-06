@@ -1,50 +1,49 @@
 import React from "react";
 import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
-import {extractID} from "../state/index";
 import { ShareModal } from "./ShareModal";
 
 // POST request to fork current
-async function fork(ID) {
-  const url = `/api/v1/blobs/fork/${ID}`;
-  try {
-    const resp = await fetch(url, {
-      method: 'post',
-      body: JSON.stringify({
-        forkedFrom: ID, //???
-        forks: [],
-      }),
-    });
-    return resp.json();
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
+// async function fork(ID) {
+//   const url = `/api/v1/blobs/fork/${ID}`;
+//   try {
+//     const resp = await fetch(url, {
+//       method: 'post',
+//       body: JSON.stringify({
+//         forkedFrom: ID, //???
+//         forks: [],
+//       }),
+//     });
+//     return resp.json();
+//   } catch (err) {
+//     console.error(err);
+//     return null;
+//   }
+// }
 
 // GET request to get number of forks
-async function numberOfForks(ID) {
-  const url = `/api/v1/blobs/get-blob/${ID}`;
-  try {
-    const resp = await fetch(url);
-    return resp.json()["forks"].length();
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
+// async function numberOfForks(ID) {
+//   const url = `/api/v1/blobs/get-blob/${ID}`;
+//   try {
+//     const resp = await fetch(url);
+//     return resp.json()["forks"].length();
+//   } catch (err) {
+//     console.error(err);
+//     return null;
+//   }
+// }
 
 // GET requrest to list all forks
-async function getForks(ID) {
-  const url = `/api/v1/blobs/get-blob/${ID}`;
-  try {
-    const resp = await fetch(url);
-    return resp.json()["forks"];
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-}
+// async function getForks(ID) {
+//   const url = `/api/v1/blobs/get-blob/${ID}`;
+//   try {
+//     const resp = await fetch(url);
+//     return resp.json()["forks"];
+//   } catch (err) {
+//     console.error(err);
+//     return null;
+//   }
+// }
 
 export function MainMenu({
   source,
@@ -54,6 +53,8 @@ export function MainMenu({
   customPlugin,
   toggleCustomPlugin,
   enableCustomPlugin,
+  id,
+  setId
 }) {
   const [shareLink, setShareLink] = React.useState("");
   const [showShareLink, setShowShareLink] = React.useState(false);
@@ -98,7 +99,26 @@ export function MainMenu({
             </Dropdown.Menu>
           </Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item>Save...</Dropdown.Item>
+          <Dropdown.Item
+            onClick={async () => {
+              const state = new REPLState(
+                source,
+                enableCustomPlugin ? customPlugin : "",
+                jsonConfig.map(config => JSON.stringify(config))
+              );
+              // Check if the id exists
+              if (!id) {
+                // If it doesn't, then this config has not been saved before
+                const blob = await state.New();
+                setId(blob.id);
+              } else {
+                // If it does, update the blob
+                state.Save(id);
+              }
+            }}
+          >
+            Save...
+          </Dropdown.Item>
           <ShareModal
             shareLink={shareLink}
             trigger={
@@ -109,7 +129,7 @@ export function MainMenu({
                     enableCustomPlugin ? customPlugin : "",
                     jsonConfig.map(config => JSON.stringify(config))
                   );
-                  const link = await state.Link();
+                  const link = await state.Link(setId);
                   setShareLink(link);
                   setShowShareLink(true);
                 }}
@@ -120,7 +140,8 @@ export function MainMenu({
           />
         </Dropdown.Menu>
       </Dropdown>
-      <Menu.Item>
+
+      {id && <Menu.Item>
         <Button as="div" labelPosition="right">
           <Button
             icon
@@ -130,7 +151,8 @@ export function MainMenu({
                 enableCustomPlugin ? customPlugin : "",
                 jsonConfig.map(config => JSON.stringify(config))
               );
-              const fork = await state.Fork(extractID());
+              const fork = await state.Fork(id);
+              setId(fork.id);
             }}
           >
             <Icon name="fork" />
@@ -139,13 +161,13 @@ export function MainMenu({
             as="a"
             basic
             onClick={() => {
-              // REPLState.FromID(extractID()).
+              //TODO: Trigger something to display all forks here
             }}
           >
-            {REPLState.GetBlob(extractID())["forks"].length()}
+            {REPLState.GetBlob(id).forks.length}
           </Label>
         </Button>
-      </Menu.Item>
+      </Menu.Item>}
     </Menu>
   );
 }
