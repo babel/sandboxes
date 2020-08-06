@@ -1,6 +1,7 @@
 import React from "react";
 import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
+import {extractID} from "../state/index";
 import { ShareModal } from "./ShareModal";
 
 export function MainMenu({
@@ -81,8 +82,13 @@ export function MainMenu({
         <Button as="div" labelPosition="right">
           <Button
             icon
-            onClick={() => {
-              forkRepo();
+            onClick={async () => {
+              const state = new REPLState(
+                source,
+                enableCustomPlugin ? customPlugin : "",
+                jsonConfig.map(config => JSON.stringify(config))
+              );
+              const fork = await state.Fork(extractID());
             }}
           >
             <Icon name="fork" />
@@ -91,10 +97,10 @@ export function MainMenu({
             as="a"
             basic
             onClick={() => {
-              listForks();
+              // REPLState.FromID(extractID()).
             }}
           >
-            2,048
+            {REPLState.GetBlob(extractID())["forks"].length()}
           </Label>
         </Button>
       </Menu.Item>

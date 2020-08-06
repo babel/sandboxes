@@ -48,11 +48,10 @@ class REPLState {
    * @param {string[]} configs
    * @param {string} forkId
    */
-  constructor(jsSource, pluginSource, configs, forkId) {
+  constructor(jsSource, pluginSource, configs) {
     this.jsSource = jsSource;
     this.pluginSource = pluginSource;
     this.configs = configs;
-    this.forkId = forkId;
   }
 
   /**
@@ -66,8 +65,8 @@ class REPLState {
       plugin: encodeToBase64(this.pluginSource),
       configs: this.configs.map(configSrc => {
         return encodeToBase64(configSrc);
-      }),
-      forkId: encodeToBase64(this.forkId),
+      })
+      // forkId: encodeToBase64(this.forkId),
     });
   }
 
@@ -78,13 +77,13 @@ class REPLState {
    */
   static Decode(encodedState) {
     let jsonState = JSON.parse(encodedState);
+    console.log(jsonState);
     return new REPLState(
       decodeBase64(jsonState.base64SourceKey),
       decodeBase64(jsonState.base64PluginKey),
       jsonState.configIDs.map(configs => {
         return decodeBase64(configs);
       }),
-      decodeBase64(jsonState)
     );
   }
 
@@ -94,6 +93,34 @@ class REPLState {
    * @returns {Promise<string>} String URL.
    */
   async Link() {
+    try {
+      // const resp = await fetch(url, {
+      //   method: "POST",
+      //   headers: {
+      //     Accept: "application/json",
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: this.Encode(),
+      // });
+      // const message = await resp.json();
+      const message = await this.Save();
+      console.log(message);
+
+      // https://stackoverflow.com/questions/6941533/get-protocol-domain-and-port-from-url
+      return (
+        window.location.href.split("/").slice(0, 3).join("/") + message.url
+      );
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  /**
+   * Save saves the current REPL state
+   * @returns {Promise<Object>} Blob representing the current state.
+   */
+  async Save() {
     const url = `/api/v1/blobs/create`;
     try {
       const resp = await fetch(url, {
@@ -104,12 +131,44 @@ class REPLState {
         },
         body: this.Encode(),
       });
-      const message = await resp.json();
+      return resp.json();
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
 
-      // https://stackoverflow.com/questions/6941533/get-protocol-domain-and-port-from-url
-      return (
-        window.location.href.split("/").slice(0, 3).join("/") + message.url
-      );
+  /**
+   * Forks a configuration given a unique identifier
+   * @returns {Promise<Object>} Blob representing the new fork
+   */
+  async Fork(ID) {
+    const url = `/api/v1/blobs/fork/${ID}`;
+    try {
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        }
+      });
+      return resp.json();
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  /**
+   * REPLState.GetBlob returns the blob given a unique identifier
+   * @param {string} ID 
+   * @return {Promise<Object>}
+   */
+  static async GetBlob(ID) {
+    const url = `/api/v1/blobs/get-blob/${ID}`;
+    try {
+      const resp = await fetch(url);
+      return await resp.json();
     } catch (err) {
       console.error(err);
       return err;
@@ -126,6 +185,7 @@ class REPLState {
     try {
       const resp = await fetch(url);
       const text = await resp.text();
+      console.log(text);
       return REPLState.Decode(text);
     } catch (err) {
       console.error(err);
