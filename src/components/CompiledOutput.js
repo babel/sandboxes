@@ -36,21 +36,32 @@ export function CompiledOutput({
   transitions.addExitTransition(compiled)
 
   const arr = transitions.getValue()
-  // transitions.wrapPluginVisitorMethod(arr[0].pluginAlias, arr[0].visitorType, null)
 
-  console.log(transitions.getValue())
+
 
   useEffect(() => {
     try {
+
+      console.log(transitions)
+
+      let options = processOptions(babelConfig, debouncedPlugin);
+
+      options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
+
+      console.log('babel', Babel, source)
+
       const { code } = Babel.transform(
         source,
-        processOptions(babelConfig, debouncedPlugin)
+        options
       );
+
       gzipSize(code).then(s => setGzip(s));
+
       setCompiled({
         code,
         size: new Blob([code], { type: "text/plain" }).size,
       });
+
     } catch (e) {
       setCompiled({
         code: e.message,
@@ -130,7 +141,7 @@ export function CompiledOutput({
           <Menu.Item>input.json</Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item>
-              {compiled ?.size}b, {gzip}b
+              {compiled?.size}b, {gzip}b
             </Menu.Item>
             <Menu.Item onClick={removeConfig}>
               <Icon name="close" />
@@ -161,10 +172,10 @@ export function CompiledOutput({
             </Grid.Column>
             <Grid.Column>
               <Code
-                value={compiled ?.code ?? ""}
+                value={compiled?.code ?? ""}
                 docName="result.js"
                 config={{ readOnly: true, lineWrapping: true }}
-                isError={compiled ?.error ?? false}
+                isError={compiled?.error ?? false}
               />
             </Grid.Column>
           </Grid>
