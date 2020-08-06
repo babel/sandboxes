@@ -65,8 +65,7 @@ class REPLState {
       plugin: encodeToBase64(this.pluginSource),
       configs: this.configs.map(configSrc => {
         return encodeToBase64(configSrc);
-      })
-      // forkId: encodeToBase64(this.forkId),
+      }),
     });
   }
 
