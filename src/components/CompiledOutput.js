@@ -4,6 +4,7 @@ import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
+import Transition from "./Transitions"
 
 import {
   convertToBabelConfig,
@@ -29,6 +30,15 @@ export function CompiledOutput({
   const [configVisible, setConfigVisible] = useState(false);
   const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
+  console.log(babelConfig)
+  const transitions = new Transition()
+  console.log(transitions.getValue())
+  transitions.addExitTransition(compiled)
+
+  const arr = transitions.getValue()
+  // transitions.wrapPluginVisitorMethod(arr[0].pluginAlias, arr[0].visitorType, null)
+
+  console.log(transitions.getValue())
 
   useEffect(() => {
     try {
