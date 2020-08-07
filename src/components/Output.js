@@ -11,19 +11,13 @@ export function Output({
   updateBabelConfig,
   removeBabelConfig,
 }) {
-
-  const TabExampleBasic = () => <Tab panes={panes} />
-
   let panes = babelConfig.map((config) => {
     return { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> }
   })
 
   return <div>
 
-    {
-      babelConfig.map((config, index) => {
-      })
-    }
+    <Tab panes={panes} />
     {
       babelConfig.map((config, index) => {
         return (
