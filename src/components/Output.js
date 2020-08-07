@@ -11,16 +11,14 @@ export function Output({
 }) {
   return babelConfig.map((config, index) => {
     return (
-      <Fragment>
-        <CompiledOutput
-          source={debouncedSource}
-          customPlugin={enableCustomPlugin ? customPlugin : undefined}
-          config={config}
-          key={index}
-          onConfigChange={config => updateBabelConfig(config, index)}
-          removeConfig={() => removeBabelConfig(index)}
-        />
-      </Fragment>
+      <CompiledOutput
+        source={debouncedSource}
+        customPlugin={enableCustomPlugin ? customPlugin : undefined}
+        config={config}
+        key={index}
+        onConfigChange={config => updateBabelConfig(config, index)}
+        removeConfig={() => removeBabelConfig(index)}
+      />
     );
   });
 }
