@@ -51,8 +51,10 @@ export function CompiledOutput({
 
   function displayAvailablePlugins() {
 
-    return Object.keys(plugins).map(pluginName => {
+    return Object.keys(plugins).map((pluginName, index) => {
       const plugin = plugins[pluginName];
+
+      console.log('plugin', pluginName, index)
 
       return (
         <Segment>
