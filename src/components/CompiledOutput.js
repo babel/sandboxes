@@ -50,11 +50,13 @@ export function CompiledOutput({
   }, [source, babelConfig, debouncedPlugin]);
 
   function displayAvailablePlugins() {
-    return Object.keys(plugins).map(pluginName => {
+
+    return Object.keys(plugins).map((pluginName, index) => {
+
       const plugin = plugins[pluginName];
 
       return (
-        <Segment>
+        <Segment key="{index}">
           <Checkbox toggle
             name={pluginName}
             type="checkbox"
