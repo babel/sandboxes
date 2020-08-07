@@ -7,7 +7,7 @@ export function transpilePlugin(pluginString, presets) {
   return Babel.transform(pluginString, {
     babelrc: false,
     configFile: false,
-    ast: true,
+    ast: false,
     highlightCode: false,
     presets: presets
   }).code;

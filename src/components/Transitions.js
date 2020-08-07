@@ -1,18 +1,9 @@
-import generate from "@babel/generator"; // babel-generator
-// import type { Transition } from "./types";
-
-/* type Parent = {
-    isProgram: () => boolean,
-    parentPath: Parent,
-    node: {
-        type: string,
-    },
-}; */
+import generate from "@babel/generator";
 
 export default class Transitions {
-    _transitions = []; //: Array<Transition>
+    _transitions = [];
 
-    _getProgramParent = (path) => { // Parent
+    _getProgramParent = (path) => {
         let parent = path;
         do {
             if (parent.isProgram()) return parent;
@@ -23,7 +14,7 @@ export default class Transitions {
         return this._transitions;
     };
 
-    addExitTransition = (code) => { // string
+    addExitTransition = (code) => {
         this._transitions.push({
             code,
             pluginAlias: "output",
@@ -33,12 +24,11 @@ export default class Transitions {
     };
 
     wrapPluginVisitorMethod = (
-        pluginAlias, // : any
-        visitorType, // : any
-        callback // : any
+        pluginAlias,
+        visitorType,
+        callback
     ) => {
-        return (...args) => { // : any
-            // $FlowFixMe
+        return (...args) => {
             const { code } = generate(this._getProgramParent(args[0]).node);
 
             if (
