@@ -24,8 +24,8 @@ export function Output({
 
     {
       babelConfig.map((config, index) => {
-      }
-      }
+      })
+    }
     {
       babelConfig.map((config, index) => {
         return (
