@@ -125,6 +125,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
 
   useEffect(() => {
 
+    alert('use effect called')
+
     panes = [
       { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> },
       { menuItem: 'Tab 2', render: () => <Tab.Pane>Tab 2 Content</Tab.Pane> },
