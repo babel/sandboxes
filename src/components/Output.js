@@ -24,16 +24,5 @@ export function Output({
     }
   })
 
-  return <div>
-
-    <Tab panes={panes} />
-    {
-      babelConfig.map((config, index) => {
-        return (
-          
-        );
-      })
-    }
-  </div>
-    ;
+  return <Tab panes={panes} />;
 }
