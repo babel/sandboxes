@@ -181,7 +181,7 @@ class REPLState {
    * @return {Promise<Object>}
    */
   static async GetBlob(ID) {
-    const url = `/api/v1/blobs/get-blob/${ID}`;
+    const url = `/api/v1/blobs/${ID}`;
     try {
       const resp = await fetch(url);
       return await resp.json();
