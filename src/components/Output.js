@@ -12,26 +12,21 @@ export function Output({
   removeBabelConfig,
 }) {
   let panes = babelConfig.map((config) => {
-    return { menuItem: 'Config 1', render: () => <Tab.Pane>Config 1 Content</Tab.Pane> }
+    return {
+      menuItem: 'Config 1', render: () => <CompiledOutput
+        source={debouncedSource}
+        customPlugin={enableCustomPlugin ? customPlugin : undefined}
+        config={config}
+        key={index}
+        onConfigChange={config => updateBabelConfig(config, index)}
+        removeConfig={() => removeBabelConfig(index)}
+      />
+    }
   })
 
   return <div>
 
     <Tab panes={panes} />
-    {
-      babelConfig.map((config, index) => {
-        return (
-          <CompiledOutput
-            source={debouncedSource}
-            customPlugin={enableCustomPlugin ? customPlugin : undefined}
-            config={config}
-            key={index}
-            onConfigChange={config => updateBabelConfig(config, index)}
-            removeConfig={() => removeBabelConfig(index)}
-          />
-        );
-      })
-    }
   </div>
     ;
 }
