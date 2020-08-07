@@ -54,8 +54,6 @@ export function CompiledOutput({
     return Object.keys(plugins).map((pluginName, index) => {
       const plugin = plugins[pluginName];
 
-      console.log('plugin', pluginName, index)
-
       return (
         <Segment key={index}>
           <Checkbox toggle
