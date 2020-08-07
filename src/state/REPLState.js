@@ -76,7 +76,6 @@ class REPLState {
    */
   static Decode(encodedState) {
     let jsonState = JSON.parse(encodedState);
-    console.log(jsonState);
     return new REPLState(
       decodeBase64(jsonState.base64SourceKey),
       decodeBase64(jsonState.base64PluginKey),
@@ -102,9 +101,7 @@ class REPLState {
       }
 
       // https://stackoverflow.com/questions/6941533/get-protocol-domain-and-port-from-url
-      return (
-        window.location.href.split("/").slice(0, 3).join("/") + message.url
-      );
+      return window.location.href.split("/").slice(0, 3).join("/") + message.url
     } catch (err) {
       console.error(err);
       return err;
@@ -204,7 +201,6 @@ class REPLState {
     try {
       const resp = await fetch(url);
       const text = await resp.text();
-      console.log(text);
       const replState = REPLState.Decode(text);
       replState.id = ID;
       return replState;

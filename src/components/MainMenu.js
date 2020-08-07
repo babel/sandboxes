@@ -54,7 +54,8 @@ export function MainMenu({
   toggleCustomPlugin,
   enableCustomPlugin,
   id,
-  setId
+  setId,
+  setForksVisible,
 }) {
   const [shareLink, setShareLink] = React.useState("");
   const [showShareLink, setShowShareLink] = React.useState(false);
@@ -161,7 +162,7 @@ export function MainMenu({
             as="a"
             basic
             onClick={() => {
-              //TODO: Trigger something to display all forks here
+              setForksVisible(true);
             }}
           >
             {REPLState.GetBlob(id).forks.length}

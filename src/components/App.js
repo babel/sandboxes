@@ -3,6 +3,7 @@ import * as Babel from "@babel/standalone";
 
 import { CustomPlugin } from "./CustomPlugin";
 import { MainMenu } from "./MainMenu";
+import { Forks } from "./Forks";
 import { Input } from "./Input";
 import { Output } from "./Output";
 import { gzipSize } from "../gzip";
@@ -87,6 +88,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }
   const [gzip, setGzip] = useState(null);
   const debouncedSource = useDebounce(source, 125);
 
+  const [forksVisible, setForksVisible] = useState(false);
+
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
       const newConfigs = [...configs];
@@ -121,9 +124,11 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }
         enableCustomPlugin={enableCustomPlugin}
         id={id}
         setId={setId}
+        setForksVisible={setForksVisible}
       />
 
       <Grid celled="internally">
+        {forksVisible && <Forks id={id} />}
         <Input size={size} gzip={gzip} source={source} setSource={setSource} />
         {enableCustomPlugin && (
           <CustomPlugin
