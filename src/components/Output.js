@@ -12,6 +12,9 @@ export function Output({
   removeBabelConfig,
 }) {
   let panes = babelConfig.map((config, index) => {
+
+    console.log(config)
+
     return {
       menuItem: 'Config 1', render: () => <CompiledOutput
         source={debouncedSource}
