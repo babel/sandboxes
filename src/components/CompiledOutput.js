@@ -57,7 +57,7 @@ export function CompiledOutput({
       console.log('plugin', pluginName, index)
 
       return (
-        <Segment>
+        <Segment key={index}>
           <Checkbox toggle
             name={pluginName}
             type="checkbox"
