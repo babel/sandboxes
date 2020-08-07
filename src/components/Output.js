@@ -12,7 +12,7 @@ export function Output({
   removeBabelConfig,
 }) {
   let panes = babelConfig.map((config) => {
-    return { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> }
+    return { menuItem: 'Config 1', render: () => <Tab.Pane>Config 1 Content</Tab.Pane> }
   })
 
   return <div>
