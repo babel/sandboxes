@@ -136,7 +136,6 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
       />
 
       <Grid celled="internally">
-        {TabExampleBasic()}
         <Input
           ref={editorRef}
           size={size}
