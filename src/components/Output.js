@@ -21,20 +21,33 @@ export function Output({
   removeBabelConfig,
 }) {
   return <div>
-
+    {
+      babelConfig.map((config, index) => {
+        return (
+          <CompiledOutput
+            source={debouncedSource}
+            customPlugin={enableCustomPlugin ? customPlugin : undefined}
+            config={config}
+            key={index}
+            onConfigChange={config => updateBabelConfig(config, index)}
+            removeConfig={() => removeBabelConfig(index)}
+          />
+        );
+      })
+    }{
+      babelConfig.map((config, index) => {
+        return (
+          <CompiledOutput
+            source={debouncedSource}
+            customPlugin={enableCustomPlugin ? customPlugin : undefined}
+            config={config}
+            key={index}
+            onConfigChange={config => updateBabelConfig(config, index)}
+            removeConfig={() => removeBabelConfig(index)}
+          />
+        );
+      })
+    }
   </div>
-  {
-    babelConfig.map((config, index) => {
-      return (
-        <CompiledOutput
-          source={debouncedSource}
-          customPlugin={enableCustomPlugin ? customPlugin : undefined}
-          config={config}
-          key={index}
-          onConfigChange={config => updateBabelConfig(config, index)}
-          removeConfig={() => removeBabelConfig(index)}
-        />
-      );
-    })
-  };
+    ;
 }
