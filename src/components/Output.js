@@ -16,7 +16,7 @@ export function Output({
     console.log(config)
 
     return {
-      menuItem: 'Config 1', render: () => <CompiledOutput
+      menuItem: 'Config ' + index, render: () => <CompiledOutput
         source={debouncedSource}
         customPlugin={enableCustomPlugin ? customPlugin : undefined}
         config={config}
