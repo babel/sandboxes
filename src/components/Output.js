@@ -13,7 +13,7 @@ export function Output({
 }) {
   let panes = babelConfig.map((config, index) => {
 
-    console.log(config)
+    console.log(index)
 
     return {
       menuItem: 'Config ' + index, render: () => <CompiledOutput
