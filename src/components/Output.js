@@ -8,9 +8,6 @@ const TabExampleBasic = () => <Tab panes={panes} />
 
 // console.log(configs)
 
-// panes = configs.map((config) => {
-//   return { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> }
-// })
 
 export function Output({
   babelConfig,
@@ -20,6 +17,12 @@ export function Output({
   updateBabelConfig,
   removeBabelConfig,
 }) {
+
+
+  panes = configs.map((config) => {
+    return { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> }
+  })
+
   return <div>
 
     {
