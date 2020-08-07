@@ -5,6 +5,7 @@ import { gzipSize } from "../gzip";
 import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
 import Transition from "./Transitions"
+import { TimeTravel } from "./TimeTravel"
 
 import {
   convertToBabelConfig,
@@ -14,7 +15,7 @@ import {
 
 import { plugins, presets } from "../plugins-list";
 
-import { Grid, Icon, Menu, Segment, Divider, Checkbox, Card } from "semantic-ui-react";
+import { Grid, Icon, Menu, Segment, Divider, Checkbox } from "semantic-ui-react";
 
 export function CompiledOutput({
   source,
@@ -30,28 +31,28 @@ export function CompiledOutput({
   const [configVisible, setConfigVisible] = useState(false);
   const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
-  const [astTimeTravel, setAstTimeTravel] = useState(null);
+  const [timeTravel, setTimeTravel] = useState(null);
 
-  console.log(babelConfig)
+  // console.log(babelConfig)
   const transitions = new Transition()
   /* console.log(transitions.getValue())
   transitions.addExitTransition(compiled)
 
   const arr = transitions.getValue() */
 
-  console.log(astTimeTravel)
+  // console.log(timeTravel)
 
   useEffect(() => {
     try {
 
-      console.log(transitions)
+      // console.log(transitions)
 
       let options = processOptions(babelConfig, debouncedPlugin);
 
       options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
       // console.log(transitions._transitions)
       //console.log('babel', Babel, source)
-      setAstTimeTravel(transitions.getValue());
+      setTimeTravel(transitions.getValue());
 
       const { code } = Babel.transform(
         source,
@@ -190,33 +191,12 @@ export function CompiledOutput({
           </Segment>
         </Grid.Column>
       </Grid.Row>
-      <Grid.Row>
-        <Grid.Column width={16}>
-          <Menu attached="top" tabular inverted>
-            <Menu.Item>Time Travel</Menu.Item>
-            <Menu.Menu position="right">
-              <Menu.Item onClick={removeConfig}>
-                <Icon name="close" />
-              </Menu.Item>
-            </Menu.Menu>
-          </Menu>
-          <Segment inverted attached="bottom">
-            {astTimeTravel !== null ? (
-              <Fragment>
-                <Card.Group>
-                  {astTimeTravel.map(timetravel => (
-                    <Card
-                      header={`${timetravel.currentNode}`}
-                      meta={`${timetravel.pluginAlias} | visitorType: ${timetravel.visitorType}`}
-                      description={`${timetravel.code}`}
-                    />
-                  ))}
-                </Card.Group>
-              </Fragment>
-            ) : null}
-          </Segment>
-        </Grid.Column>
-      </Grid.Row>
+      <TimeTravel
+        timeTravel={timeTravel}
+        setTimeTravel={setTimeTravel}
+        removeConfig={removeConfig}
+        source={source}
+      />
     </Fragment>
   );
 }

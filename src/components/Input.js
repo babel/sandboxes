@@ -3,6 +3,7 @@ import { Grid, Menu, Segment } from "semantic-ui-react";
 import { Code } from "./styles";
 
 export function Input({ size, gzip, source, setSource }) {
+  // console.log(timeTravel)
   return (
     <Grid.Row>
       <Grid.Column width={16}>
