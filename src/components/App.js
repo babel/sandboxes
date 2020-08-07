@@ -108,20 +108,6 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   importDefaultPlugins();
   registerDefaultPlugins();
 
-  const [updateWithTimeTravel, setWithTimeTravel] = useState("")
-  const [shouldUpdateOuputWithTimeTravel, setUpdateOuptut] = useState(false);
-
-  /* console.log(updateWithTimeTravel)
-  if (updateWithTimeTravel === source) {
-    console.log("yes")
-  } else {
-    console.log(source)
-  } */
-  /* if (shouldUpdateOuputWithTimeTravel) {
-  } else {
-    console.log(source)
-  } */
-
   return (
     <Root>
       <MainMenu
@@ -150,8 +136,6 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
           customPlugin={customPlugin}
           updateBabelConfig={updateBabelConfig}
           removeBabelConfig={removeBabelConfig}
-          withTimeTravel={setWithTimeTravel}
-          setUpdateOuptut={setUpdateOuptut}
         />
       </Grid>
     </Root>

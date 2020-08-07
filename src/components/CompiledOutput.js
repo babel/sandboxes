@@ -22,9 +22,7 @@ export function CompiledOutput({
   customPlugin,
   config,
   onConfigChange,
-  removeConfig,
-  timeTravelCode,
-  setUpdateTimeTravel
+  removeConfig
 }) {
   const [compiled, setCompiled] = useState(null);
   const [gzip, setGzip] = useState(null);
@@ -35,38 +33,16 @@ export function CompiledOutput({
 
   const [timeTravel, setTimeTravel] = useState(null);
 
-  const [shouldUpdate, setUpdate] = useState();
+  const [timeTravelCode, setTimeTravelCode] = useState();
 
-  console.log(shouldUpdate)
-  timeTravelCode(shouldUpdate)
-
-  /* if (shouldUpdate) {
-    timeTravelCode(timeTravel)
-  }
-
-  if (shouldUpdate) {
-    setUpdateTimeTravel(true)
-  } */
-
-  // console.log(babelConfig)
   const transitions = new Transition()
-  /* console.log(transitions.getValue())
-  transitions.addExitTransition(compiled)
-
-  const arr = transitions.getValue() */
-
-  // console.log(timeTravel)
 
   useEffect(() => {
     try {
 
-      // console.log(transitions)
-
       let options = processOptions(babelConfig, debouncedPlugin);
 
       options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
-      // console.log(transitions._transitions)
-      //console.log('babel', Babel, source)
       setTimeTravel(transitions.getValue());
 
       const { code } = Babel.transform(
@@ -75,7 +51,6 @@ export function CompiledOutput({
       );
 
       gzipSize(code).then(s => setGzip(s));
-      // console.log(transitions.getValue())
 
       setCompiled({
         code,
@@ -154,8 +129,6 @@ export function CompiledOutput({
     }
   }
 
-  console.log(compiled ?.code === shouldUpdate)
-  const res = compiled ?.code ?? "";
   return (
     <Fragment>
       <Grid.Row>
@@ -195,7 +168,7 @@ export function CompiledOutput({
               </Grid.Column>
               <Grid.Column>
                 <Code
-                  value={shouldUpdate !== undefined ? shouldUpdate : compiled ?.code}
+                  value={timeTravelCode !== undefined ? timeTravelCode : compiled ?.code}
                   docName="result.js"
                   config={{ readOnly: true, lineWrapping: true }}
                   isError={compiled ?.error ?? false}
@@ -213,7 +186,7 @@ export function CompiledOutput({
         setTimeTravel={setTimeTravel}
         removeConfig={removeConfig}
         source={compiled ?.code ?? ""}
-        setUpdate={setUpdate}
+        setTimeTravelCode={setTimeTravelCode}
       />
     </Fragment>
   );
