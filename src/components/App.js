@@ -120,15 +120,6 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
     });
   }, [editorRef, cursorAST]);
 
-  let panes = [];
-  const TabExampleBasic = () => <Tab panes={panes} />
-
-  console.log(configs)
-
-  panes = configs.map((config) => {
-    return { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> }
-  })
-
   importDefaultPlugins();
   registerDefaultPlugins();
 
