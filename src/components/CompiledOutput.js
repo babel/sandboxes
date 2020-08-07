@@ -23,6 +23,8 @@ export function CompiledOutput({
   config,
   onConfigChange,
   removeConfig,
+  timeTravelCode,
+  setUpdateTimeTravel
 }) {
   const [compiled, setCompiled] = useState(null);
   const [gzip, setGzip] = useState(null);
@@ -32,6 +34,19 @@ export function CompiledOutput({
   const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
   const [timeTravel, setTimeTravel] = useState(null);
+
+  const [shouldUpdate, setUpdate] = useState();
+
+  console.log(shouldUpdate)
+  timeTravelCode(shouldUpdate)
+
+  /* if (shouldUpdate) {
+    timeTravelCode(timeTravel)
+  }
+
+  if (shouldUpdate) {
+    setUpdateTimeTravel(true)
+  } */
 
   // console.log(babelConfig)
   const transitions = new Transition()
@@ -139,6 +154,8 @@ export function CompiledOutput({
     }
   }
 
+  console.log(compiled ?.code === shouldUpdate)
+  const res = compiled ?.code ?? "";
   return (
     <Fragment>
       <Grid.Row>
@@ -177,12 +194,21 @@ export function CompiledOutput({
                 </Wrapper>
               </Grid.Column>
               <Grid.Column>
-                <Code
-                  value={compiled ?.code ?? ""}
-                  docName="result.js"
-                  config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled ?.error ?? false}
-                />
+                {compiled ?.code === shouldUpdate ? (
+                  <Code
+                    value={compiled ?.code}
+                    docName="result.js"
+                    config={{ readOnly: true, lineWrapping: true }}
+                    isError={compiled ?.error ?? false}
+                  />
+                ) : (
+                    <Code
+                      value={compiled ?.code || shouldUpdate !== source ? source : shouldUpdate}
+                      docName="result.js"
+                      config={{ readOnly: true, lineWrapping: true }}
+                      isError={compiled ?.error ?? false}
+                    />
+                  )}
               </Grid.Column>
             </Grid>
             <Divider vertical>
@@ -195,7 +221,8 @@ export function CompiledOutput({
         timeTravel={timeTravel}
         setTimeTravel={setTimeTravel}
         removeConfig={removeConfig}
-        source={source}
+        source={compiled ?.code ?? ""}
+        setUpdate={setUpdate}
       />
     </Fragment>
   );

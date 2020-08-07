@@ -20,11 +20,11 @@ window.babel = Babel;
  */
 export function convertToBabelConfig(jsonConfig) {
   let result = { plugins: [], presets: [] };
-  result.plugins = jsonConfig.plugins?.map(plugin => [
+  result.plugins = jsonConfig.plugins ?.map(plugin => [
     plugin.name,
     plugin.defaultConfig,
   ]);
-  result.presets = jsonConfig.presets?.map(preset => [
+  result.presets = jsonConfig.presets ?.map(preset => [
     preset.name,
     preset.defaultConfig,
   ]);
@@ -33,7 +33,7 @@ export function convertToBabelConfig(jsonConfig) {
 
 export function convertToJsonConfig(babelConfig) {
   let result = { plugins: [], presets: [] };
-  result.plugins = babelConfig.plugins?.map(plugin => {
+  result.plugins = babelConfig.plugins ?.map(plugin => {
     return {
       name: plugin[0],
       description: plugins[plugin[0]].description,
@@ -108,6 +108,20 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   importDefaultPlugins();
   registerDefaultPlugins();
 
+  const [updateWithTimeTravel, setWithTimeTravel] = useState("")
+  const [shouldUpdateOuputWithTimeTravel, setUpdateOuptut] = useState(false);
+
+  /* console.log(updateWithTimeTravel)
+  if (updateWithTimeTravel === source) {
+    console.log("yes")
+  } else {
+    console.log(source)
+  } */
+  /* if (shouldUpdateOuputWithTimeTravel) {
+  } else {
+    console.log(source)
+  } */
+
   return (
     <Root>
       <MainMenu
@@ -136,6 +150,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
           customPlugin={customPlugin}
           updateBabelConfig={updateBabelConfig}
           removeBabelConfig={removeBabelConfig}
+          withTimeTravel={setWithTimeTravel}
+          setUpdateOuptut={setUpdateOuptut}
         />
       </Grid>
     </Root>

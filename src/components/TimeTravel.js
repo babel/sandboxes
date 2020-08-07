@@ -18,13 +18,31 @@ import { Input } from "./Input"
 
 export function TimeTravel({
     timeTravel,
-    setTimeTravel,
+    /* setTimeTravel, */
     removeConfig,
-    source
+    source,
+    setUpdate
 }) {
-
+    // console.log(timeTravel)
     // const [shouldRenderOutput, renderOutput] = useState(false);
-    const [currentHistoryCode, setHistoryCode] = useState();
+    // const [currentHistoryCode, setHistoryCode] = useState();
+
+    /* function showHistoryOutput(props) {
+        const shouldRender = props.shouldRender;
+
+        console.log(shouldRender)
+        if (shouldRender) {
+            return <Input source={timeTravel} />
+        }
+    } */
+
+    /*     if (currentHistoryCode !== undefined) {
+    
+            return <Input source={currentHistoryCode} />
+        } else if (currentHistoryCode === "") {
+    
+            return <Input source={source} />
+        } */
 
     return (
         <Grid.Row>
@@ -47,8 +65,8 @@ export function TimeTravel({
                                         header={`${timetravel.currentNode}`}
                                         meta={`${timetravel.pluginAlias} | visitorType: ${timetravel.visitorType}`}
                                         description={`${timetravel.code}`}
-                                        onMouseEnter={() => setHistoryCode(timetravel.code)}
-                                        onMouseLeave={() => setHistoryCode("")}
+                                        onMouseEnter={() => setUpdate(`${timetravel.code}`)}
+                                        onMouseLeave={() => setUpdate(source)}
                                     />
                                 ))}
                                 {/* <showHistoryOutput shouldRender={shouldRenderOutput} /> */}
