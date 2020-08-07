@@ -51,12 +51,11 @@ export function CompiledOutput({
 
   function displayAvailablePlugins() {
 
-    return Object.keys(plugins).map((pluginName, index) => {
-
+    return Object.keys(plugins).map(pluginName => {
       const plugin = plugins[pluginName];
 
       return (
-        <Segment key="{index}">
+        <Segment>
           <Checkbox toggle
             name={pluginName}
             type="checkbox"
