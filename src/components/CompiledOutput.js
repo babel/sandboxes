@@ -69,10 +69,10 @@ export function CompiledOutput({
   }
 
   function displayAvailablePresets() {
-    return Object.keys(presets).map(presetName => {
+    return Object.keys(presets).map((presetName, index) => {
       const preset = presets[presetName];
       return (
-        <Segment><Checkbox toggle
+        <Segment key={index}><Checkbox toggle
           name={presetName}
           type="checkbox"
           onChange={handlePresetChange}
