@@ -13,14 +13,13 @@ export function Output({
 }) {
   let panes = babelConfig.map((config) => {
     return {
-      menuItem: 'Config 1', render: () => <CompiledOutput
-        source={debouncedSource}
-        customPlugin={enableCustomPlugin ? customPlugin : undefined}
-        config={config}
-        key={index}
-        onConfigChange={config => updateBabelConfig(config, index)}
-        removeConfig={() => removeBabelConfig(index)}
-      />
+      menuItem: 'Config 1', render: () => {
+        babelConfig.map((config, index) => {
+          return (
+          
+        );
+        })
+      }
     }
   })
 
