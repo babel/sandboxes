@@ -3,8 +3,6 @@ import { CompiledOutput } from "./CompiledOutput";
 
 import { Tab } from "semantic-ui-react";
 
-const TabExampleBasic = () => <Tab panes={panes} />
-
 export function Output({
   babelConfig,
   debouncedSource,
@@ -13,6 +11,8 @@ export function Output({
   updateBabelConfig,
   removeBabelConfig,
 }) {
+
+  const TabExampleBasic = () => <Tab panes={panes} />
 
   let panes = babelConfig.map((config) => {
     return { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> }
