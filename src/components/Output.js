@@ -3,11 +3,7 @@ import { CompiledOutput } from "./CompiledOutput";
 
 import { Tab } from "semantic-ui-react";
 
-let panes = [];
 const TabExampleBasic = () => <Tab panes={panes} />
-
-// console.log(configs)
-
 
 export function Output({
   babelConfig,
