@@ -194,21 +194,12 @@ export function CompiledOutput({
                 </Wrapper>
               </Grid.Column>
               <Grid.Column>
-                {compiled ?.code === shouldUpdate ? (
-                  <Code
-                    value={compiled ?.code}
-                    docName="result.js"
-                    config={{ readOnly: true, lineWrapping: true }}
-                    isError={compiled ?.error ?? false}
-                  />
-                ) : (
-                    <Code
-                      value={compiled ?.code || shouldUpdate !== source ? source : shouldUpdate}
-                      docName="result.js"
-                      config={{ readOnly: true, lineWrapping: true }}
-                      isError={compiled ?.error ?? false}
-                    />
-                  )}
+                <Code
+                  value={shouldUpdate !== undefined ? shouldUpdate : compiled ?.code}
+                  docName="result.js"
+                  config={{ readOnly: true, lineWrapping: true }}
+                  isError={compiled ?.error ?? false}
+                />
               </Grid.Column>
             </Grid>
             <Divider vertical>
