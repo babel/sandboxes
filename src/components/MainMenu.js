@@ -165,7 +165,7 @@ export function MainMenu({
               setForksVisible(true);
             }}
           >
-            {REPLState.GetBlob(id).forks.length}
+            {REPLState.GetBlob(id).forks?.length ?? 0}
           </Label>
         </Button>
       </Menu.Item>}
