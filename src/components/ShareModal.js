@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Modal, Header } from "semantic-ui-react";
+import { Button, Input, Modal } from "semantic-ui-react";
 
 export function ShareModal({ trigger, shareLink }) {
   // State to track open vs closed

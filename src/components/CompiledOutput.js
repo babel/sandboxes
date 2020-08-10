@@ -4,8 +4,8 @@ import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
-import Transition from "./Transitions"
-import { TimeTravel } from "./TimeTravel"
+import Transition from "./Transitions";
+import { TimeTravel } from "./TimeTravel";
 
 import {
   convertToBabelConfig,
@@ -15,40 +15,41 @@ import {
 
 import { plugins, presets } from "../plugins-list";
 
-import { Grid, Icon, Menu, Segment, Divider, Checkbox } from "semantic-ui-react";
+import {
+  Grid,
+  Icon,
+  Menu,
+  Segment,
+  Divider,
+  Checkbox,
+} from "semantic-ui-react";
 
 export function CompiledOutput({
   source,
   customPlugin,
   config,
   onConfigChange,
-  removeConfig
+  removeConfig,
 }) {
   const [compiled, setCompiled] = useState(null);
   const [gzip, setGzip] = useState(null);
   const debouncedPlugin = useDebounce(customPlugin, 125);
 
-  const [configVisible, setConfigVisible] = useState(false);
   const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
   const [timeTravel, setTimeTravel] = useState(null);
 
   const [timeTravelCode, setTimeTravelCode] = useState();
 
-  const transitions = new Transition()
-
   useEffect(() => {
     try {
-
       let options = processOptions(babelConfig, debouncedPlugin);
 
+      const transitions = new Transition();
       options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
       setTimeTravel(transitions.getValue());
 
-      const { code } = Babel.transform(
-        source,
-        options
-      );
+      const { code } = Babel.transform(source, options);
 
       gzipSize(code).then(s => setGzip(s));
 
@@ -56,7 +57,6 @@ export function CompiledOutput({
         code,
         size: new Blob([code], { type: "text/plain" }).size,
       });
-
     } catch (e) {
       setCompiled({
         code: e.message,
@@ -67,15 +67,15 @@ export function CompiledOutput({
 
   function displayAvailablePlugins() {
     return Object.keys(plugins).map(pluginName => {
-      const plugin = plugins[pluginName];
-
       return (
         <Segment>
-          <Checkbox toggle
+          <Checkbox
+            toggle
             name={pluginName}
             type="checkbox"
             onChange={handlePluginChange}
-            label={pluginName} />
+            label={pluginName}
+          />
         </Segment>
       );
     });
@@ -83,20 +83,18 @@ export function CompiledOutput({
 
   function displayAvailablePresets() {
     return Object.keys(presets).map(presetName => {
-      const preset = presets[presetName];
       return (
-        <Segment><Checkbox toggle
-          name={presetName}
-          type="checkbox"
-          onChange={handlePresetChange}
-          label={presetName} />
+        <Segment>
+          <Checkbox
+            toggle
+            name={presetName}
+            type="checkbox"
+            onChange={handlePresetChange}
+            label={presetName}
+          />
         </Segment>
       );
     });
-  }
-
-  function toggleConfigVisible() {
-    setConfigVisible(!configVisible);
   }
 
   function handlePluginChange(reactEvent, checkbox) {
@@ -137,8 +135,8 @@ export function CompiledOutput({
             <Menu.Item>input.json</Menu.Item>
             <Menu.Menu position="right">
               <Menu.Item>
-                {compiled ?.size}b, {gzip}b
-            </Menu.Item>
+                {compiled?.size}b, {gzip}b
+              </Menu.Item>
               <Menu.Item onClick={removeConfig}>
                 <Icon name="close" />
               </Menu.Item>
@@ -147,12 +145,8 @@ export function CompiledOutput({
           <Segment inverted attached="bottom">
             <Grid columns={2} relaxed="very">
               <Grid.Column>
-                <Segment.Group piled>
-                  {displayAvailablePlugins()}
-                </Segment.Group>
-                <Segment.Group piled>
-                  {displayAvailablePresets()}
-                </Segment.Group>
+                <Segment.Group piled>{displayAvailablePlugins()}</Segment.Group>
+                <Segment.Group piled>{displayAvailablePresets()}</Segment.Group>
                 <Wrapper>
                   <Config
                     value={
@@ -168,10 +162,14 @@ export function CompiledOutput({
               </Grid.Column>
               <Grid.Column>
                 <Code
-                  value={timeTravelCode !== undefined ? timeTravelCode : compiled ?.code}
+                  value={
+                    timeTravelCode !== undefined
+                      ? timeTravelCode
+                      : compiled?.code
+                  }
                   docName="result.js"
                   config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled ?.error ?? false}
+                  isError={compiled?.error ?? false}
                 />
               </Grid.Column>
             </Grid>
@@ -185,7 +183,7 @@ export function CompiledOutput({
         timeTravel={timeTravel}
         setTimeTravel={setTimeTravel}
         removeConfig={removeConfig}
-        source={compiled ?.code ?? ""}
+        source={compiled?.code ?? ""}
         setTimeTravelCode={setTimeTravelCode}
       />
     </Fragment>
