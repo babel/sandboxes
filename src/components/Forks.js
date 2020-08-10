@@ -4,8 +4,8 @@ import {Segment} from 'semantic-ui-react';
 
 export function Forks({id}) {
   function displayForks() {
-    const forks = REPLState.GetBlob(id).forks;
-    return forks.map((fork) => (
+    // REPLState.GetBlob(id).forks;
+    return REPLState.GetBlob(id).forks?.map((fork) => (
       <Segment>{fork}</Segment>
     ));
   }
