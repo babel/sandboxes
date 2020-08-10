@@ -18,6 +18,8 @@ export const lookUpNodeType = nodeType => {
   const output = [];
   const currentNode = spec[nodeType];
 
+  if (currentNode === undefined) return [];
+
   if (currentNode.parents.length !== 0)
     currentNode.parents.forEach(nodeType => {
       output.push(spec[nodeType]);
@@ -36,16 +38,10 @@ export default class UglyPopup extends React.Component {
   }
 
   render() {
-    let nodeDefs = lookUpNodeType(this.props.def);
-
-    return (
-      <>
-        {nodeDefs.map(nodeDef => (
-          <div className="nodeDef" key={nodeDef.content}>
-            <ReactMarkdown source={nodeDef.chunk} />
-          </div>
-        ))}
-      </>
-    );
+    return this.props.def.map(nodeDef => (
+      <div className="nodeDef" key={nodeDef.content}>
+        <ReactMarkdown source={nodeDef.chunk} />
+      </div>
+    ));
   }
 }

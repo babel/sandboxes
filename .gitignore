@@ -3,3 +3,5 @@ package-lock.json
 yarn-error.log
 # IDE files
 .vscode
+
+package-lock.json
