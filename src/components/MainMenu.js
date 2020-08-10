@@ -130,7 +130,7 @@ export function MainMenu({
                     enableCustomPlugin ? customPlugin : "",
                     jsonConfig.map(config => JSON.stringify(config))
                   );
-                  const link = await state.Link(setId);
+                  const link = await state.Link(id, setId);
                   setShareLink(link);
                   setShowShareLink(true);
                 }}
