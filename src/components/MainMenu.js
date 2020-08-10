@@ -56,9 +56,12 @@ export function MainMenu({
   id,
   setId,
   setForksVisible,
+  forks,
+  setForks,
 }) {
   const [shareLink, setShareLink] = React.useState("");
   const [showShareLink, setShowShareLink] = React.useState(false);
+  console.log(id);
   return (
     <Menu attached="top" inverted>
       <Menu.Item>
@@ -163,11 +166,13 @@ export function MainMenu({
               as="a"
               basic
               onClick={async () => {
+                const blob = await REPLState.GetBlob(id);
+                console.log(blob.forks);
+                setForks(blob.forks);
                 setForksVisible(true);
-                
               }}
             >
-              {REPLState.GetBlob(id).forks?.length ?? 0}
+              {forks?.length ?? 0}
             </Label>
           </Button>
         </Menu.Item>

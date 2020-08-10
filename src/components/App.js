@@ -90,12 +90,12 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }
   const debouncedSource = useDebounce(source, 125);
 
   const [forksVisible, setForksVisible] = useState(false);
-  const [blob, setBlob] = useState(null);
+  const [forks, setForks] = useState([]);
 
-  (async () => {
-    const blob = await REPLState.GetBlob(id) ?? null;
-    setBlob(blob);
-  })();
+  // (async () => {
+  //   const blob = await REPLState.GetBlob(id) ?? null;
+  //   setBlob(blob);
+  // })();
 
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
@@ -132,10 +132,12 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }
         id={id}
         setId={setId}
         setForksVisible={setForksVisible}
+        forks={forks}
+        setForks={setForks}
       />
 
       <Grid celled="internally">
-        {forksVisible && <Forks forks={blob.forks} />}
+        {forksVisible && <Forks forks={forks} />}
         <Input size={size} gzip={gzip} source={source} setSource={setSource} />
         {enableCustomPlugin && (
           <CustomPlugin
