@@ -33,9 +33,9 @@ function CompositeObj({ k, obj, cursor, setPos }) {
     SettingsContext
   );
   // setPos is memoized so dependency is just to placate warnings.
-  const subtree = useMemo(() => {
+  const content = useMemo(() => {
     // Memoization should be helpful when parts of the tree are the same.
-    return Object.entries(obj).map(([i, v], index) => {
+    let subTree = Object.entries(obj).map(([i, v], index) => {
       // i, v are key and value.
       if ((hideTypes && i === "type") || (hideLocation && i === "loc")) {
         return [v, null];
@@ -51,16 +51,13 @@ function CompositeObj({ k, obj, cursor, setPos }) {
         </Fragment>,
       ];
     });
-  }, [obj, cursor, setPos, hideTypes, hideLocation]);
-
-  const content = useMemo(() => {
-    return (sortTree
-      ? subtree.sort((former, latter) => {
+    subTree = sortTree
+      ? subTree.sort((former, latter) => {
           return sortByCompositeness(former[0], latter[0]);
         })
-      : subtree
-    ).map(v => v[1]);
-  }, [subtree, sortTree]);
+      : subTree;
+    return subTree.map(v => v[1]);
+  }, [obj, cursor, setPos, hideTypes, hideLocation, sortTree]);
 
   const { type, loc, value, name } = obj;
   const label = type ? type : k;
