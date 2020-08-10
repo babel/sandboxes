@@ -142,33 +142,36 @@ export function MainMenu({
         </Dropdown.Menu>
       </Dropdown>
 
-      {id && <Menu.Item>
-        <Button as="div" labelPosition="right">
-          <Button
-            icon
-            onClick={async () => {
-              const state = new REPLState(
-                source,
-                enableCustomPlugin ? customPlugin : "",
-                jsonConfig.map(config => JSON.stringify(config))
-              );
-              const fork = await state.Fork(id);
-              setId(fork.id);
-            }}
-          >
-            <Icon name="fork" />
+      {id && (
+        <Menu.Item>
+          <Button as="div" labelPosition="right">
+            <Button
+              icon
+              onClick={async () => {
+                const state = new REPLState(
+                  source,
+                  enableCustomPlugin ? customPlugin : "",
+                  jsonConfig.map(config => JSON.stringify(config))
+                );
+                const fork = await state.Fork(id);
+                setId(fork.id);
+              }}
+            >
+              <Icon name="fork" />
+            </Button>
+            <Label
+              as="a"
+              basic
+              onClick={async () => {
+                setForksVisible(true);
+                
+              }}
+            >
+              {REPLState.GetBlob(id).forks?.length ?? 0}
+            </Label>
           </Button>
-          <Label
-            as="a"
-            basic
-            onClick={() => {
-              setForksVisible(true);
-            }}
-          >
-            {REPLState.GetBlob(id).forks?.length ?? 0}
-          </Label>
-        </Button>
-      </Menu.Item>}
+        </Menu.Item>
+      )}
     </Menu>
   );
 }

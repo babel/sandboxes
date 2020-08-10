@@ -184,7 +184,8 @@ class REPLState {
     const url = `/api/v1/blobs/${ID}`;
     try {
       const resp = await fetch(url);
-      return await resp.json();
+      const json = await resp.json();
+      return json;
     } catch (err) {
       console.error(err);
       return err;
