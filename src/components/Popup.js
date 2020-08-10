@@ -32,16 +32,10 @@ export const lookUpNodeType = nodeType => {
 // get the object array, generate a popup window appending
 // several 'window' elements together
 
-export default class UglyPopup extends React.Component {
-  constructor() {
-    super();
-  }
-
-  render() {
-    return this.props.def.map(nodeDef => (
-      <div className="nodeDef" key={nodeDef.content}>
-        <ReactMarkdown source={nodeDef.chunk} />
-      </div>
-    ));
-  }
+export default function UglyPopup({ def }) {
+  return def.map(nodeDef => (
+    <div className="nodeDef" key={nodeDef.content}>
+      <ReactMarkdown source={nodeDef.chunk} />
+    </div>
+  ));
 }
