@@ -3,48 +3,6 @@ import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
 import { ShareModal } from "./ShareModal";
 
-// POST request to fork current
-// async function fork(ID) {
-//   const url = `/api/v1/blobs/fork/${ID}`;
-//   try {
-//     const resp = await fetch(url, {
-//       method: 'post',
-//       body: JSON.stringify({
-//         forkedFrom: ID, //???
-//         forks: [],
-//       }),
-//     });
-//     return resp.json();
-//   } catch (err) {
-//     console.error(err);
-//     return null;
-//   }
-// }
-
-// GET request to get number of forks
-// async function numberOfForks(ID) {
-//   const url = `/api/v1/blobs/get-blob/${ID}`;
-//   try {
-//     const resp = await fetch(url);
-//     return resp.json()["forks"].length();
-//   } catch (err) {
-//     console.error(err);
-//     return null;
-//   }
-// }
-
-// GET requrest to list all forks
-// async function getForks(ID) {
-//   const url = `/api/v1/blobs/get-blob/${ID}`;
-//   try {
-//     const resp = await fetch(url);
-//     return resp.json()["forks"];
-//   } catch (err) {
-//     console.error(err);
-//     return null;
-//   }
-// }
-
 export function MainMenu({
   source,
   setSource,
@@ -61,7 +19,6 @@ export function MainMenu({
 }) {
   const [shareLink, setShareLink] = React.useState("");
   const [showShareLink, setShowShareLink] = React.useState(false);
-  console.log(id);
   return (
     <Menu attached="top" inverted>
       <Menu.Item>

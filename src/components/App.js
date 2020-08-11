@@ -9,7 +9,6 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
-import REPLState from "../state/REPLState";
 
 import { Grid } from "semantic-ui-react";
 import { plugins } from "../plugins-list";

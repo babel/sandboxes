@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import REPLState from '../state/REPLState';
+import React from 'react';
 import {Segment} from 'semantic-ui-react';
 
 export function Forks({forks}) {
