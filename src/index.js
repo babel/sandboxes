@@ -88,6 +88,7 @@ async function getState() {
       defaultSource={state.jsSource}
       defCustomPlugin={state.pluginSource}
       defaultId={state.id}
+      defaultForks={state.forks}
     />,
     document.getElementById("root")
   );

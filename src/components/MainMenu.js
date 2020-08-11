@@ -2,6 +2,7 @@ import React from "react";
 import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
 import { ShareModal } from "./ShareModal";
+import { ForkModal } from "./ForkModal";
 
 export function MainMenu({
   source,
@@ -13,9 +14,8 @@ export function MainMenu({
   enableCustomPlugin,
   id,
   setId,
-  setForksVisible,
+  toggleForksVisible,
   forks,
-  setForks,
 }) {
   const [shareLink, setShareLink] = React.useState("");
   const [showShareLink, setShowShareLink] = React.useState(false);
@@ -105,9 +105,8 @@ export function MainMenu({
       {id && (
         <Menu.Item>
           <Button as="div" labelPosition="right">
-            <Button
-              icon
-              onClick={async () => {
+            <ForkModal
+              onFork={async () => {
                 const state = new REPLState(
                   source,
                   enableCustomPlugin ? customPlugin : "",
@@ -116,17 +115,18 @@ export function MainMenu({
                 const fork = await state.Fork(id);
                 setId(fork.id);
               }}
-            >
-              <Icon name="fork" />
-            </Button>
+              trigger={
+                <Button icon>
+                  <Icon name="fork" />
+                </Button>
+              }
+            />
+
             <Label
               as="a"
               basic
               onClick={async () => {
-                const blob = await REPLState.GetBlob(id);
-                console.log(blob.forks);
-                setForks(blob.forks);
-                setForksVisible(true);
+                toggleForksVisible();
               }}
             >
               {forks?.length ?? 0}

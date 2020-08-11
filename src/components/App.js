@@ -9,7 +9,7 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
-import VizOutput from "./AST/Viz";
+// import VizOutput from "./AST/Viz";
 
 import { Grid } from "semantic-ui-react";
 import { plugins } from "../plugins-list";
@@ -77,7 +77,7 @@ function registerDefaultPlugins() {
   );
 }
 
-export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }) => {
+export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, defaultForks }) => {
   const [source, setSource] = React.useState(defaultSource);
   const [enableCustomPlugin, toggleCustomPlugin] = React.useState(false);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
@@ -90,8 +90,11 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }
   const debouncedSource = useDebounce(source, 125);
 
   const [forksVisible, setForksVisible] = useState(false);
-  const [forks, setForks] = useState([]);
+  const [forks, setForks] = useState(defaultForks);
 
+  function toggleForksVisible() {
+    setForksVisible(!forksVisible);
+  }
 
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
@@ -127,9 +130,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }
         enableCustomPlugin={enableCustomPlugin}
         id={id}
         setId={setId}
-        setForksVisible={setForksVisible}
+        toggleForksVisible={toggleForksVisible}
         forks={forks}
-        setForks={setForks}
       />
 
       <Grid celled="internally">

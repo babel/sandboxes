@@ -1,10 +1,14 @@
-import React from 'react';
-import {Segment} from 'semantic-ui-react';
+import React from "react";
+import { Segment, Grid } from "semantic-ui-react";
 
-export function Forks({forks}) {
+export function Forks({ forks }) {
   return (
     <Segment.Group>
-      {forks?.map((fork) => <Segment>{fork}</Segment>)}
+      {forks?.length ? (
+        forks.map(fork => <Segment>{fork}</Segment>)
+      ) : (
+        <Segment>No forks to display.</Segment>
+      )}
     </Segment.Group>
-  )
+  );
 }

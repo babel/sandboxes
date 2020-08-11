@@ -202,8 +202,10 @@ class REPLState {
     try {
       const resp = await fetch(url);
       const text = await resp.text();
+      // const json = await resp.json();
       const replState = REPLState.Decode(text);
       replState.id = ID;
+      replState.forks = JSON.parse(text).forks;
       return replState;
     } catch (err) {
       console.error(err);
