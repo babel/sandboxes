@@ -9,6 +9,7 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
+import VizOutput from "./AST/Viz";
 
 import { Grid } from "semantic-ui-react";
 import { plugins } from "../plugins-list";
@@ -91,10 +92,6 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId }
   const [forksVisible, setForksVisible] = useState(false);
   const [forks, setForks] = useState([]);
 
-  // (async () => {
-  //   const blob = await REPLState.GetBlob(id) ?? null;
-  //   setBlob(blob);
-  // })();
 
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
