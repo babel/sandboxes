@@ -1,8 +1,6 @@
 import React from "react";
 import { CompiledOutput } from "./CompiledOutput";
 
-import { Tab } from "semantic-ui-react";
-
 export function Output({
   babelConfig,
   debouncedSource,
@@ -10,22 +8,15 @@ export function Output({
   customPlugin,
   updateBabelConfig,
   removeBabelConfig,
+  index
 }) {
-  let panes = babelConfig.map((config, index) => {
 
-    console.log(index)
+  return <CompiledOutput
+    source={debouncedSource}
+    customPlugin={enableCustomPlugin ? customPlugin : undefined}
+    config={babelConfig}
+    onConfigChange={config => updateBabelConfig(config, index)}
+    removeConfig={() => removeBabelConfig(index)}
+  />
 
-    return {
-      menuItem: 'Config ' + index, render: () => <CompiledOutput
-        source={debouncedSource}
-        customPlugin={enableCustomPlugin ? customPlugin : undefined}
-        config={config}
-        key={index}
-        onConfigChange={config => updateBabelConfig(config, index)}
-        removeConfig={() => removeBabelConfig(index)}
-      />
-    }
-  })
-
-  return <Tab panes={panes} />;
 }

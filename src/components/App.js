@@ -17,35 +17,6 @@ import { plugins } from "../plugins-list";
 
 window.babel = Babel;
 
-/**
- * Converts internal json plugin/preset config to babel form
- * @param {Object} jsonConfig
- */
-export function convertToBabelConfig(jsonConfig) {
-  let result = { plugins: [], presets: [] };
-  result.plugins = jsonConfig.plugins?.map(plugin => [
-    plugin.name,
-    plugin.defaultConfig,
-  ]);
-  result.presets = jsonConfig.presets?.map(preset => [
-    preset.name,
-    preset.defaultConfig,
-  ]);
-  return result;
-}
-
-export function convertToJsonConfig(babelConfig) {
-  let result = { plugins: [], presets: [] };
-  result.plugins = babelConfig.plugins?.map(plugin => {
-    return {
-      name: plugin[0],
-      description: plugins[plugin[0]].description,
-      fileLocation: plugins[plugin[0]].fileLocation,
-      defaultConfig: plugin[1],
-    };
-  });
-}
-
 function importDefaultPlugins() {
   Object.keys(plugins).forEach(pluginName => {
     const script = document.createElement("script");
@@ -90,6 +61,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
   const [gzip, setGzip] = useState(null);
   const debouncedSource = useDebounce(source, 125);
 
+  const [panes, setPanes] = useState([]);
+
   const [forksVisible, setForksVisible] = useState(false);
   const [forks, setForks] = useState(defaultForks);
 
@@ -109,12 +82,14 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
   const [showAST, setShowAST] = useState(true);
 
   const updateBabelConfig = useCallback((config, index) => {
-    setJsonConfig(configs => {
-      const newConfigs = [...configs];
-      newConfigs[index] = config;
 
-      return newConfigs;
-    });
+    console.log('set index', index, 'as', config)
+
+    jsonConfig[index] = config;
+
+    console.log(jsonConfig);
+    setJsonConfig(jsonConfig);
+
   }, []);
 
   const removeBabelConfig = useCallback(index => {
@@ -140,6 +115,40 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
 
   importDefaultPlugins();
   registerDefaultPlugins();
+
+  useEffect(() => {
+
+    console.log('jsonConfig is', jsonConfig)
+
+    setPanes(jsonConfig.map((config, index) => {
+
+      return {
+        menuItem: 'Config ' + index, render: () =>
+          <><Output
+            babelConfig={config}
+            debouncedSource={debouncedSource}
+            enableCustomPlugin={enableCustomPlugin}
+            customPlugin={customPlugin}
+            updateBabelConfig={updateBabelConfig}
+            removeBabelConfig={removeBabelConfig}
+            index={index}
+          />
+            {showAST && (
+              <VizOutput
+                code={debouncedSource}
+                cursor={debouncedCursor}
+                setCursorAST={setCursorAST}
+                plugins={plugins}
+                setShowAST={setShowAST}
+              />
+            )
+            }
+          </>
+      }
+    }));
+
+  }, [jsonConfig]);
+
 
   return (
     <Root>
@@ -178,23 +187,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
             setCustomPlugin={setCustomPlugin}
           />
         )}
-        <Output
-          babelConfig={jsonConfig}
-          debouncedSource={debouncedSource}
-          enableCustomPlugin={enableCustomPlugin}
-          customPlugin={customPlugin}
-          updateBabelConfig={updateBabelConfig}
-          removeBabelConfig={removeBabelConfig}
-        />
-        {showAST && (
-          <VizOutput
-            code={debouncedSource}
-            cursor={debouncedCursor}
-            setCursorAST={setCursorAST}
-            plugins={plugins}
-            setShowAST={setShowAST}
-          />
-        )}
+        <Tab panes={panes} />
+
       </Grid>
     </Root>
   );

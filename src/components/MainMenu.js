@@ -2,7 +2,7 @@ import React from "react";
 import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
 import { ShareModal } from "./ShareModal";
-// import { ForkModal } from "./ForkModal";
+// import { Modal } from "./ForkModal";
 
 export function MainMenu({
   source,
@@ -41,7 +41,10 @@ export function MainMenu({
             onClick={() =>
               setBabelConfig(configs => [
                 ...configs,
-                configs[configs.length - 1],
+                {
+                  "plugins": [],
+                  "presets": []
+                },
               ])
             }
           >

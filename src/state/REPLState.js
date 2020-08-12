@@ -11,10 +11,16 @@ function toBinary(string) {
 
 // source: https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
 function fromBinary(binary) {
+
+  console.log(binary.length)
+
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
+
+  console.log(bytes)
+
   return String.fromCharCode(...new Uint16Array(bytes.buffer));
 }
 
@@ -202,6 +208,9 @@ class REPLState {
     try {
       const resp = await fetch(url);
       const text = await resp.text();
+
+      console.log(resp)
+
       // const json = await resp.json();
       const replState = REPLState.Decode(text);
       replState.id = ID;

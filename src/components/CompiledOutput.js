@@ -7,12 +7,6 @@ import { useDebounce } from "../utils/useDebounce";
 import Transition from "./Transitions";
 import { TimeTravel } from "./TimeTravel";
 
-import {
-  convertToBabelConfig,
-  //   importDefaultPlugins,
-  //   registerDefaultPlugins
-} from "./App";
-
 import { plugins, presets } from "../plugins-list";
 
 import {
@@ -23,7 +17,7 @@ import {
   Divider,
   Checkbox,
 } from "semantic-ui-react";
-
+import { check, string } from "yargs";
 
 export function CompiledOutput({
   source,
@@ -33,55 +27,62 @@ export function CompiledOutput({
   removeConfig,
 }) {
   const [compiled, setCompiled] = useState(null);
+  const [stringConfig, setStringConfig] = useState(JSON.stringify(config, null, '\t'));
   const [gzip, setGzip] = useState(null);
   const debouncedPlugin = useDebounce(customPlugin, 125);
-
-  const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
   const [timeTravel, setTimeTravel] = useState(null);
 
   const [timeTravelCode, setTimeTravelCode] = useState();
 
+  let saveConfig = () => {
+
+    let options = processOptions(config, debouncedPlugin);
+
+    const transitions = new Transition();
+    options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
+    setTimeTravel(transitions.getValue());
+
+    const { code } = Babel.transform(source, options);
+
+    gzipSize(code).then(s => setGzip(s));
+
+    setCompiled({
+      code,
+      size: new Blob([code], { type: "text/plain" }).size,
+    });
+
+  }
+
+  useEffect(saveConfig, [source, config, debouncedPlugin]);
+
   useEffect(() => {
+    setStringConfig(JSON.stringify(config, null, '\t'));
+  }, [config])
+
+  useEffect(() => {
+
+    console.log('stringConfig changed')
+
     try {
-      let options = processOptions(babelConfig, debouncedPlugin);
-
-      const transitions = new Transition();
-      options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
-      setTimeTravel(transitions.getValue());
-
-      const { code } = Babel.transform(source, options);
-
-      gzipSize(code).then(s => setGzip(s));
-
-      setCompiled({
-        code,
-        size: new Blob([code], { type: "text/plain" }).size,
-      });
+      let sconfig = JSON.parse(stringConfig);
+      saveConfig(sconfig);
     } catch (e) {
       setCompiled({
         code: e.message,
         error: true,
       });
     }
-  }, [source, babelConfig, debouncedPlugin]);
+
+  }, [stringConfig])
 
   function displayAvailablePlugins() {
-<<<<<<< HEAD
     return Object.keys(plugins).map(pluginName => {
       return (
-        <Segment>
+        <Segment
+          key={pluginName}>
           <Checkbox
             toggle
-=======
-
-    return Object.keys(plugins).map((pluginName, index) => {
-      const plugin = plugins[pluginName];
-
-      return (
-        <Segment key={index}>
-          <Checkbox toggle
->>>>>>> ianjennings/input-tabs
             name={pluginName}
             type="checkbox"
             onChange={handlePluginChange}
@@ -93,10 +94,10 @@ export function CompiledOutput({
   }
 
   function displayAvailablePresets() {
-<<<<<<< HEAD
     return Object.keys(presets).map(presetName => {
       return (
-        <Segment>
+        <Segment
+          key={presetName}>
           <Checkbox
             toggle
             name={presetName}
@@ -104,50 +105,58 @@ export function CompiledOutput({
             onChange={handlePresetChange}
             label={presetName}
           />
-=======
-    return Object.keys(presets).map((presetName, index) => {
-      const preset = presets[presetName];
-      return (
-        <Segment key={index}><Checkbox toggle
-          name={presetName}
-          type="checkbox"
-          onChange={handlePresetChange}
-          label={presetName} />
->>>>>>> ianjennings/input-tabs
         </Segment>
       );
     });
   }
 
   function handlePluginChange(reactEvent, checkbox) {
+
+    console.log('plugin change', stringConfig)
+
+    config.plugins = config.plugins || [];
     if (checkbox.checked) {
-      config.plugins.push(plugins[checkbox.name]);
+      config.plugins.push([plugins[checkbox.name].name, plugins[checkbox.name].defaultConfig]);
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
+      setStringConfig(JSON.stringify(config, null, '\t'));
     } else {
       config.plugins = config.plugins.filter(plugin => {
         return plugin.name !== checkbox.name;
       });
+      setStringConfig(JSON.stringify(config, null, '\t'));
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
     }
-    console.log(config);
-    console.log(babelConfig);
+    console.log('handlepluginchnage reuslt', config);
   }
 
   function handlePresetChange(reactEvent, checkbox) {
     if (checkbox.checked) {
       config.presets.push(presets[checkbox.name]);
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
     } else {
       config.presets = config.presets.filter(preset => {
         return preset.name !== checkbox.name;
       });
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
     }
   }
+
+  function handleStringConfigChange(configText) {
+
+    console.log('changed')
+
+    try {
+
+
+      let sConfig = JSON.parse(configText)
+      onConfigChange(sConfig);
+
+    } catch (e) {
+      console.log('invalid config')
+    }
+    setStringConfig(configText)
+  }
+
 
   return (
     <Fragment>
@@ -171,12 +180,8 @@ export function CompiledOutput({
                 <Segment.Group piled>{displayAvailablePresets()}</Segment.Group>
                 <Wrapper>
                   <Config
-                    value={
-                      babelConfig === Object(babelConfig)
-                        ? JSON.stringify(babelConfig, null, "\t")
-                        : babelConfig
-                    }
-                    onChange={onConfigChange}
+                    value={stringConfig}
+                    onChange={handleStringConfigChange}
                     docName="config.json"
                     config={{ mode: "application/json" }}
                   />
