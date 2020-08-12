@@ -24,6 +24,7 @@ import {
   Checkbox,
 } from "semantic-ui-react";
 
+
 export function CompiledOutput({
   source,
   customPlugin,
@@ -66,11 +67,21 @@ export function CompiledOutput({
   }, [source, babelConfig, debouncedPlugin]);
 
   function displayAvailablePlugins() {
+<<<<<<< HEAD
     return Object.keys(plugins).map(pluginName => {
       return (
         <Segment>
           <Checkbox
             toggle
+=======
+
+    return Object.keys(plugins).map((pluginName, index) => {
+      const plugin = plugins[pluginName];
+
+      return (
+        <Segment key={index}>
+          <Checkbox toggle
+>>>>>>> ianjennings/input-tabs
             name={pluginName}
             type="checkbox"
             onChange={handlePluginChange}
@@ -82,6 +93,7 @@ export function CompiledOutput({
   }
 
   function displayAvailablePresets() {
+<<<<<<< HEAD
     return Object.keys(presets).map(presetName => {
       return (
         <Segment>
@@ -92,6 +104,16 @@ export function CompiledOutput({
             onChange={handlePresetChange}
             label={presetName}
           />
+=======
+    return Object.keys(presets).map((presetName, index) => {
+      const preset = presets[presetName];
+      return (
+        <Segment key={index}><Checkbox toggle
+          name={presetName}
+          type="checkbox"
+          onChange={handlePresetChange}
+          label={presetName} />
+>>>>>>> ianjennings/input-tabs
         </Segment>
       );
     });

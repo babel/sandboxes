@@ -11,8 +11,9 @@ import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
 import VizOutput from "./AST/Viz";
 
-import { Grid } from "semantic-ui-react";
+import { Grid, Tab } from "semantic-ui-react";
 import { plugins } from "../plugins-list";
+
 
 window.babel = Babel;
 
