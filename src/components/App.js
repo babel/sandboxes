@@ -3,6 +3,7 @@ import * as Babel from "@babel/standalone";
 
 import { CustomPlugin } from "./CustomPlugin";
 import { MainMenu } from "./MainMenu";
+import { Forks } from "./Forks";
 import { Input } from "./Input";
 import { Output } from "./Output";
 import { gzipSize } from "../gzip";
@@ -76,10 +77,11 @@ function registerDefaultPlugins() {
   );
 }
 
-export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
+export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, defaultForks }) => {
   const [source, setSource] = React.useState(defaultSource);
   const [enableCustomPlugin, toggleCustomPlugin] = React.useState(false);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
+  const [id, setId] = useState(defaultId);
   const [jsonConfig, setJsonConfig] = useState(
     Array.isArray(defaultConfig) ? defaultConfig : [defaultConfig]
   );
@@ -87,6 +89,12 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   const [gzip, setGzip] = useState(null);
   const debouncedSource = useDebounce(source, 125);
 
+  const [forksVisible, setForksVisible] = useState(false);
+  const [forks, setForks] = useState(defaultForks);
+
+  function toggleForksVisible() {
+    setForksVisible(!forksVisible);
+  }
   const [cursor, setCursor] = useState({ line: 0, ch: 0 });
   const [cursorAST, setCursorAST] = useState({
     anchor: { line: 0, ch: 0 },
@@ -96,7 +104,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   const editorRef = useRef(null);
 
   // Array of plugin names for AST Viz integration
-  const [plugins] = useState(["doExpressions"]);
+  const [plugins, setPlugins] = useState(["doExpressions"]);
+  const [showAST, setShowAST] = useState(true);
 
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
@@ -118,9 +127,14 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   }, [debouncedSource]);
 
   useEffect(() => {
-    editorRef.current.editor.setSelection(cursorAST.anchor, cursorAST.head, {
-      scroll: false,
-    });
+
+    if (editorRef && editorRef.current && cursorAST.anchor && cursorAST.head) {
+
+      editorRef.current.editor.setSelection(cursorAST.anchor, cursorAST.head, {
+        scroll: false,
+      });
+    }
+
   }, [editorRef, cursorAST]);
 
   importDefaultPlugins();
@@ -136,17 +150,26 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
         customPlugin={customPlugin}
         toggleCustomPlugin={toggleCustomPlugin}
         enableCustomPlugin={enableCustomPlugin}
+        id={id}
+        setId={setId}
+        toggleForksVisible={toggleForksVisible}
+        forks={forks}
+        showAST={showAST}
+        setShowAST={setShowAST}
       />
 
       <Grid celled="internally">
-        <Input
+        {forksVisible && <Forks forks={forks} />}
+        <Input size={size}
+          gzip={gzip}
+          source={source}
           ref={editorRef}
+          setSource={setSource}
+          setCursor={setCursorAST}
           size={size}
           gzip={gzip}
           source={source}
-          setSource={setSource}
-          setCursor={setCursor}
-        />
+          setSource={setSource} />
         {enableCustomPlugin && (
           <CustomPlugin
             toggleCustomPlugin={toggleCustomPlugin}
@@ -162,12 +185,15 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
           updateBabelConfig={updateBabelConfig}
           removeBabelConfig={removeBabelConfig}
         />
-        <VizOutput
-          code={debouncedSource}
-          cursor={debouncedCursor}
-          setCursorAST={setCursorAST}
-          plugins={plugins}
-        />
+        {showAST && (
+          <VizOutput
+            code={debouncedSource}
+            cursor={debouncedCursor}
+            setCursorAST={setCursorAST}
+            plugins={plugins}
+            setShowAST={setShowAST}
+          />
+        )}
       </Grid>
     </Root>
   );

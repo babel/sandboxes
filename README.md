@@ -27,3 +27,9 @@ To start the server, visit [babel-sandbox-server](https://github.com/MLH-Fellows
 
 ### Contributing:
 - Run `yarn lint DIRECTORY` before submitting a PR
+
+Alternatively, run the following command (prefered):
+```
+find src -name "*.js" | xargs yarn prettier --write 
+find src -name "*.js" | xargs yarn lint
+```

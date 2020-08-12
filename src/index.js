@@ -75,7 +75,8 @@ async function getState() {
   if (!isShareLink()) {
     return defaultState;
   }
-  const state = await REPLState.FromID(extractID());
+  const id = extractID();
+  const state = await REPLState.FromID(id);
   return state === null ? defaultState : state;
 }
 
@@ -86,6 +87,8 @@ async function getState() {
       defaultConfig={state.configs.map(conf => JSON.parse(conf))}
       defaultSource={state.jsSource}
       defCustomPlugin={state.pluginSource}
+      defaultId={state.id}
+      defaultForks={state.forks}
     />,
     document.getElementById("root")
   );
