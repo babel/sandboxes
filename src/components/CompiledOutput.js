@@ -128,7 +128,7 @@ export function CompiledOutput({
     }
   }
 
-  const sourceCode = compiled?.code ?? "";
+  const sourceCode = compiled ?.code ?? "";
   return (
     <Fragment>
       <Grid.Row>
@@ -142,14 +142,12 @@ export function CompiledOutput({
                     <Dropdown.Menu>
                       <Dropdown.Item
                         text="Source Output"
-                        key={`${sourceCode}`}
                         onClick={() => setTimeTravelCode(sourceCode)}
                       />
 
                       {timeTravel.map(timetravel => (
                         <Dropdown.Item
                           text={`${timetravel.currentNode}`}
-                          key={`${timetravel.code}`}
                           onClick={() =>
                             setTimeTravelCode(`${timetravel.code}`)
                           }
@@ -162,7 +160,7 @@ export function CompiledOutput({
             </Menu.Menu>
             <Menu.Menu position="right">
               <Menu.Item>
-                {compiled?.size}b, {gzip}b
+                {compiled ?.size}b, {gzip}b
               </Menu.Item>
               <Menu.Item onClick={removeConfig}>
                 <Icon name="close" />
@@ -192,11 +190,11 @@ export function CompiledOutput({
                   value={
                     timeTravelCode !== undefined
                       ? timeTravelCode
-                      : compiled?.code
+                      : compiled ?.code
                   }
                   docName="result.js"
                   config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled?.error ?? false}
+                  isError={compiled ?.error ?? false}
                 />
               </Grid.Column>
             </Grid>
