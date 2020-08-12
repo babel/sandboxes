@@ -127,9 +127,14 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
   }, [debouncedSource]);
 
   useEffect(() => {
-    // editorRef.current.editor.setSelection(cursorAST.anchor, cursorAST.head, {
-    //   scroll: false,
-    // });
+
+    if (editorRef && editorRef.current && cursorAST.anchor && cursorAST.head) {
+
+      editorRef.current.editor.setSelection(cursorAST.anchor, cursorAST.head, {
+        scroll: false,
+      });
+    }
+
   }, [editorRef, cursorAST]);
 
   importDefaultPlugins();
@@ -151,17 +156,20 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
         forks={forks}
         showAST={showAST}
         setShowAST={setShowAST}
-        ref={editorRef}
-        size={size}
-        gzip={gzip}
-        source={source}
-        setSource={setSource}
-        setCursor={setCursorAST}
       />
 
       <Grid celled="internally">
         {forksVisible && <Forks forks={forks} />}
-        <Input size={size} gzip={gzip} source={source} setSource={setSource} />
+        <Input size={size}
+          gzip={gzip}
+          source={source}
+          ref={editorRef}
+          setSource={setSource}
+          setCursor={setCursorAST}
+          size={size}
+          gzip={gzip}
+          source={source}
+          setSource={setSource} />
         {enableCustomPlugin && (
           <CustomPlugin
             toggleCustomPlugin={toggleCustomPlugin}
