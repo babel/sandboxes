@@ -22,6 +22,8 @@ import {
   Segment,
   Divider,
   Checkbox,
+  Dropdown,
+  Button,
 } from "semantic-ui-react";
 
 export function CompiledOutput({
@@ -38,8 +40,9 @@ export function CompiledOutput({
   const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
   const [timeTravel, setTimeTravel] = useState(null);
-
   const [timeTravelCode, setTimeTravelCode] = useState();
+  const [timeTravelIndex, setTimeTravelIndex] = useState(1);
+  const [displayAtIndex, setDisplayAtIndex] = useState("Time Travel");
 
   useEffect(() => {
     try {
@@ -127,15 +130,61 @@ export function CompiledOutput({
     }
   }
 
+  const sourceCode = compiled ?.code ?? "";
   return (
     <Fragment>
       <Grid.Row>
         <Grid.Column width={16}>
           <Menu attached="top" tabular inverted>
             <Menu.Item>input.json</Menu.Item>
+            <Menu.Menu position="left">
+              <Menu.Item>
+                {timeTravel !== null ? (
+                  <Dropdown text={displayAtIndex}>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        text="Source Output"
+                        onClick={() => {
+                          setTimeTravelCode(sourceCode);
+                          setDisplayAtIndex("Source Output");
+                          if (timeTravelIndex !== timeTravel.length) {
+                            setTimeTravelIndex(1);
+                          }
+                        }}
+                      />
+
+                      {timeTravel.map((timetravel, i) => (
+                        <Dropdown.Item
+                          text={`${timetravel.currentNode}`}
+                          onClick={() => {
+                            setTimeTravelCode(`${timetravel.code}`);
+                            setDisplayAtIndex(`${timetravel.currentNode}`);
+                            if (timeTravelIndex !== timeTravel.length) {
+                              setTimeTravelIndex(i + 1);
+                            }
+                          }}
+                        />
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                ) : null}
+              </Menu.Item>
+              <Button
+                content="Next"
+                onClick={() => {
+                  setDisplayAtIndex(
+                    `${timeTravel[timeTravelIndex - 1] ?.currentNode}`
+                  );
+                  setTimeTravelCode(`${timeTravel[timeTravelIndex - 1] ?.code}`);
+                  if (timeTravelIndex !== timeTravel.length) {
+                    setTimeTravelIndex(timeTravelIndex + 1);
+                  }
+                }}
+              />
+            </Menu.Menu>
             <Menu.Menu position="right">
               <Menu.Item>
-                {compiled?.size}b, {gzip}b
+                {compiled ?.size}b, {gzip}b
               </Menu.Item>
               <Menu.Item onClick={removeConfig}>
                 <Icon name="close" />
@@ -165,11 +214,11 @@ export function CompiledOutput({
                   value={
                     timeTravelCode !== undefined
                       ? timeTravelCode
-                      : compiled?.code
+                      : compiled ?.code
                   }
                   docName="result.js"
                   config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled?.error ?? false}
+                  isError={compiled ?.error ?? false}
                 />
               </Grid.Column>
             </Grid>
@@ -179,13 +228,14 @@ export function CompiledOutput({
           </Segment>
         </Grid.Column>
       </Grid.Row>
-      <TimeTravel
+
+      {/* <TimeTravel
         timeTravel={timeTravel}
         setTimeTravel={setTimeTravel}
         removeConfig={removeConfig}
-        source={compiled?.code ?? ""}
+        source={compiled ?.code ?? ""}
         setTimeTravelCode={setTimeTravelCode}
-      />
+      /> */}
     </Fragment>
   );
 }
