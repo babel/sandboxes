@@ -16,9 +16,10 @@ export function MainMenu({
   setId,
   toggleForksVisible,
   forks,
+  showAST,
+  setShowAST,
 }) {
   const [shareLink, setShareLink] = React.useState("");
-  const [showShareLink, setShowShareLink] = React.useState(false);
   return (
     <Menu attached="top" inverted>
       <Menu.Item>
@@ -59,6 +60,12 @@ export function MainMenu({
               <Dropdown.Item>Import</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => setShowAST(showAST => !showAST)}
+            disabled={showAST}
+          >
+            Add AST Explorer
+          </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
             onClick={async () => {
@@ -92,7 +99,6 @@ export function MainMenu({
                   );
                   const link = await state.Link(id, setId);
                   setShareLink(link);
-                  setShowShareLink(true);
                 }}
               >
                 Share
