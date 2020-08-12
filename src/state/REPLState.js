@@ -120,6 +120,9 @@ class REPLState {
    */
   async New() {
     const url = `/api/v1/blobs/create`;
+
+
+    console.log(this.Encode())
     try {
       const resp = await fetch(url, {
         method: "POST",
