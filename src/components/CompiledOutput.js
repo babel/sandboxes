@@ -22,6 +22,7 @@ import {
   Segment,
   Divider,
   Checkbox,
+  Dropdown
 } from "semantic-ui-react";
 
 export function CompiledOutput({
@@ -127,15 +128,39 @@ export function CompiledOutput({
     }
   }
 
+  const sourceCode = compiled ?.code ?? "";
   return (
     <Fragment>
       <Grid.Row>
         <Grid.Column width={16}>
           <Menu attached="top" tabular inverted>
             <Menu.Item>input.json</Menu.Item>
+            <Menu.Menu position="left">
+              <Menu.Item>
+                {timeTravel !== null ? (
+                  <Dropdown text="Time Travel">
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        text="Source Output"
+                        key={`${sourceCode}`}
+                        onClick={() => setTimeTravelCode(sourceCode)}
+                      />
+
+                      {timeTravel.map(timetravel => (
+                        <Dropdown.Item
+                          text={`${timetravel.currentNode}`}
+                          key={`${timetravel.code}`}
+                          onClick={() => setTimeTravelCode(`${timetravel.code}`)}
+                        />
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                ) : null}
+              </Menu.Item>
+            </Menu.Menu>
             <Menu.Menu position="right">
               <Menu.Item>
-                {compiled?.size}b, {gzip}b
+                {compiled ?.size}b, {gzip}b
               </Menu.Item>
               <Menu.Item onClick={removeConfig}>
                 <Icon name="close" />
@@ -165,11 +190,11 @@ export function CompiledOutput({
                   value={
                     timeTravelCode !== undefined
                       ? timeTravelCode
-                      : compiled?.code
+                      : compiled ?.code
                   }
                   docName="result.js"
                   config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled?.error ?? false}
+                  isError={compiled ?.error ?? false}
                 />
               </Grid.Column>
             </Grid>
@@ -179,13 +204,15 @@ export function CompiledOutput({
           </Segment>
         </Grid.Column>
       </Grid.Row>
-      <TimeTravel
+
+      {/* <TimeTravel
         timeTravel={timeTravel}
         setTimeTravel={setTimeTravel}
         removeConfig={removeConfig}
-        source={compiled?.code ?? ""}
+        source={compiled ?.code ?? ""}
         setTimeTravelCode={setTimeTravelCode}
-      />
+      /> */}
+
     </Fragment>
   );
 }
