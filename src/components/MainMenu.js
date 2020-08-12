@@ -11,6 +11,8 @@ export function MainMenu({
   customPlugin,
   toggleCustomPlugin,
   enableCustomPlugin,
+  showAST,
+  setShowAST,
 }) {
   const [shareLink, setShareLink] = React.useState("");
   return (
@@ -52,6 +54,12 @@ export function MainMenu({
               </Dropdown.Item>
               <Dropdown.Item>Import</Dropdown.Item>
             </Dropdown.Menu>
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => setShowAST(showAST => !showAST)}
+            disabled={showAST}
+          >
+            Add AST Explorer
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item>Save...</Dropdown.Item>

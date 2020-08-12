@@ -96,7 +96,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
   const editorRef = useRef(null);
 
   // Array of plugin names for AST Viz integration
-  const [plugins] = useState(["doExpressions"]);
+  const [plugins, setPlugins] = useState(["doExpressions"]);
+  const [showAST, setShowAST] = useState(true);
 
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
@@ -136,6 +137,8 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
         customPlugin={customPlugin}
         toggleCustomPlugin={toggleCustomPlugin}
         enableCustomPlugin={enableCustomPlugin}
+        showAST={showAST}
+        setShowAST={setShowAST}
       />
 
       <Grid celled="internally">
@@ -162,12 +165,15 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin }) => {
           updateBabelConfig={updateBabelConfig}
           removeBabelConfig={removeBabelConfig}
         />
-        <VizOutput
-          code={debouncedSource}
-          cursor={debouncedCursor}
-          setCursorAST={setCursorAST}
-          plugins={plugins}
-        />
+        {showAST && (
+          <VizOutput
+            code={debouncedSource}
+            cursor={debouncedCursor}
+            setCursorAST={setCursorAST}
+            plugins={plugins}
+            setShowAST={setShowAST}
+          />
+        )}
       </Grid>
     </Root>
   );
