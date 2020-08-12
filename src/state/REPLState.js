@@ -51,6 +51,7 @@ class REPLState {
     this.jsSource = jsSource;
     this.pluginSource = pluginSource;
     this.configs = configs;
+    this.id = "";
   }
 
   /**
@@ -80,16 +81,38 @@ class REPLState {
       decodeBase64(jsonState.base64PluginKey),
       jsonState.configIDs.map(configs => {
         return decodeBase64(configs);
-      })
+      }),
     );
   }
 
   /**
    * Link gets the sharing the sharing link
-   * for the given REPL state.
+   * for the given REPL state and updates the id
    * @returns {Promise<string>} String URL.
    */
-  async Link() {
+  async Link(id, setId) {
+    try {
+      let message;
+      if (!id) {
+        message = await this.New();
+        setId(message.id);
+      } else {
+        message = await this.Save(id);
+      }
+
+      // https://stackoverflow.com/questions/6941533/get-protocol-domain-and-port-from-url
+      return window.location.href.split("/").slice(0, 3).join("/") + message.url
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  /**
+   * New saves the current REPL state as a new blob
+   * @returns {Promise<Object>} Blob representing the current state.
+   */
+  async New() {
     const url = `/api/v1/blobs/create`;
     try {
       const resp = await fetch(url, {
@@ -100,12 +123,69 @@ class REPLState {
         },
         body: this.Encode(),
       });
-      const message = await resp.json();
+      const json = resp.json();
+      return json;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
 
-      // https://stackoverflow.com/questions/6941533/get-protocol-domain-and-port-from-url
-      return (
-        window.location.href.split("/").slice(0, 3).join("/") + message.url
-      );
+  /**
+   * Save updates the corresponding blob with the current REPLState
+   * @returns {Promise<Object>} Blob representing the current state.
+   */
+  async Save(ID) {
+    const url = `/api/v1/blobs/update/${ID}`;
+    try {
+      const resp = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: this.Encode(),
+      });
+      const json = resp.json();
+      return json;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  /**
+   * Forks a configuration given a unique identifier
+   * @returns {Promise<Object>} Blob representing the new fork
+   */
+  async Fork(ID) {
+    const url = `/api/v1/blobs/fork/${ID}`;
+    try {
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        }
+      });
+      return resp.json();
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  /**
+   * REPLState.GetBlob returns the blob given a unique identifier
+   * @param {string} ID 
+   * @return {Promise<Object>}
+   */
+  static async GetBlob(ID) {
+    const url = `/api/v1/blobs/${ID}`;
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+      return json;
     } catch (err) {
       console.error(err);
       return err;
@@ -122,12 +202,17 @@ class REPLState {
     try {
       const resp = await fetch(url);
       const text = await resp.text();
-      return REPLState.Decode(text);
+      // const json = await resp.json();
+      const replState = REPLState.Decode(text);
+      replState.id = ID;
+      replState.forks = JSON.parse(text).forks;
+      return replState;
     } catch (err) {
       console.error(err);
       return null;
     }
   }
+
 }
 
 export default REPLState;

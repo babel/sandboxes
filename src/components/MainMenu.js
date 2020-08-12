@@ -1,7 +1,8 @@
 import React from "react";
-import { Dropdown, Icon, Menu } from "semantic-ui-react";
+import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
 import { ShareModal } from "./ShareModal";
+// import { ForkModal } from "./ForkModal";
 
 export function MainMenu({
   source,
@@ -11,6 +12,10 @@ export function MainMenu({
   customPlugin,
   toggleCustomPlugin,
   enableCustomPlugin,
+  id,
+  setId,
+  toggleForksVisible,
+  forks,
   showAST,
   setShowAST,
 }) {
@@ -62,7 +67,26 @@ export function MainMenu({
             Add AST Explorer
           </Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item>Save...</Dropdown.Item>
+          <Dropdown.Item
+            onClick={async () => {
+              const state = new REPLState(
+                source,
+                enableCustomPlugin ? customPlugin : "",
+                jsonConfig.map(config => JSON.stringify(config))
+              );
+              // Check if the id exists
+              if (!id) {
+                // If it doesn't, then this config has not been saved before
+                const blob = await state.New();
+                setId(blob.id);
+              } else {
+                // If it does, update the blob
+                state.Save(id);
+              }
+            }}
+          >
+            Save...
+          </Dropdown.Item>
           <ShareModal
             shareLink={shareLink}
             trigger={
@@ -73,7 +97,7 @@ export function MainMenu({
                     enableCustomPlugin ? customPlugin : "",
                     jsonConfig.map(config => JSON.stringify(config))
                   );
-                  const link = await state.Link();
+                  const link = await state.Link(id, setId);
                   setShareLink(link);
                 }}
               >
@@ -83,6 +107,39 @@ export function MainMenu({
           />
         </Dropdown.Menu>
       </Dropdown>
+
+      {id && (
+        <Menu.Item>
+          <Button as="div" labelPosition="right">
+            {/* <ForkModal
+              onFork={async () => {
+                const state = new REPLState(
+                  source,
+                  enableCustomPlugin ? customPlugin : "",
+                  jsonConfig.map(config => JSON.stringify(config))
+                );
+                const fork = await state.Fork(id);
+                setId(fork.id);
+              }}
+              trigger={
+                <Button icon>
+                  <Icon name="fork" />
+                </Button>
+              }
+            /> */}
+
+            <Label
+              as="a"
+              basic
+              onClick={async () => {
+                toggleForksVisible();
+              }}
+            >
+              {forks?.length ?? 0}
+            </Label>
+          </Button>
+        </Menu.Item>
+      )}
     </Menu>
   );
 }
