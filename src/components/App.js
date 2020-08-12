@@ -154,6 +154,7 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
         setId={setId}
         toggleForksVisible={toggleForksVisible}
         forks={forks}
+        setForks={setForks}
         showAST={showAST}
         setShowAST={setShowAST}
       />
