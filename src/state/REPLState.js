@@ -81,7 +81,7 @@ class REPLState {
       decodeBase64(jsonState.base64PluginKey),
       jsonState.configIDs.map(configs => {
         return decodeBase64(configs);
-      }),
+      })
     );
   }
 
@@ -101,7 +101,9 @@ class REPLState {
       }
 
       // https://stackoverflow.com/questions/6941533/get-protocol-domain-and-port-from-url
-      return window.location.href.split("/").slice(0, 3).join("/") + message.url
+      return (
+        window.location.href.split("/").slice(0, 3).join("/") + message.url
+      );
     } catch (err) {
       console.error(err);
       return err;
@@ -166,7 +168,7 @@ class REPLState {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-        }
+        },
       });
       return resp.json();
     } catch (err) {
@@ -177,7 +179,7 @@ class REPLState {
 
   /**
    * REPLState.GetBlob returns the blob given a unique identifier
-   * @param {string} ID 
+   * @param {string} ID
    * @return {Promise<Object>}
    */
   static async GetBlob(ID) {
@@ -212,7 +214,6 @@ class REPLState {
       return null;
     }
   }
-
 }
 
 export default REPLState;
