@@ -9,11 +9,7 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
-<<<<<<< HEAD
-// import VizOutput from "./AST/Viz";
-=======
 import VizOutput from "./AST/Viz";
->>>>>>> master
 
 import { Grid } from "semantic-ui-react";
 import { plugins } from "../plugins-list";
@@ -93,14 +89,12 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
   const [gzip, setGzip] = useState(null);
   const debouncedSource = useDebounce(source, 125);
 
-<<<<<<< HEAD
   const [forksVisible, setForksVisible] = useState(false);
   const [forks, setForks] = useState(defaultForks);
 
   function toggleForksVisible() {
     setForksVisible(!forksVisible);
   }
-=======
   const [cursor, setCursor] = useState({ line: 0, ch: 0 });
   const [cursorAST, setCursorAST] = useState({
     anchor: { line: 0, ch: 0 },
@@ -112,7 +106,6 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
   // Array of plugin names for AST Viz integration
   const [plugins, setPlugins] = useState(["doExpressions"]);
   const [showAST, setShowAST] = useState(true);
->>>>>>> master
 
   const updateBabelConfig = useCallback((config, index) => {
     setJsonConfig(configs => {
@@ -134,9 +127,9 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
   }, [debouncedSource]);
 
   useEffect(() => {
-    editorRef.current.editor.setSelection(cursorAST.anchor, cursorAST.head, {
-      scroll: false,
-    });
+    // editorRef.current.editor.setSelection(cursorAST.anchor, cursorAST.head, {
+    //   scroll: false,
+    // });
   }, [editorRef, cursorAST]);
 
   importDefaultPlugins();
@@ -152,31 +145,23 @@ export const App = ({ defaultSource, defaultConfig, defCustomPlugin, defaultId, 
         customPlugin={customPlugin}
         toggleCustomPlugin={toggleCustomPlugin}
         enableCustomPlugin={enableCustomPlugin}
-<<<<<<< HEAD
         id={id}
         setId={setId}
         toggleForksVisible={toggleForksVisible}
         forks={forks}
+        showAST={showAST}
+        setShowAST={setShowAST}
+        ref={editorRef}
+        size={size}
+        gzip={gzip}
+        source={source}
+        setSource={setSource}
+        setCursor={setCursorAST}
       />
 
       <Grid celled="internally">
         {forksVisible && <Forks forks={forks} />}
         <Input size={size} gzip={gzip} source={source} setSource={setSource} />
-=======
-        showAST={showAST}
-        setShowAST={setShowAST}
-      />
-
-      <Grid celled="internally">
-        <Input
-          ref={editorRef}
-          size={size}
-          gzip={gzip}
-          source={source}
-          setSource={setSource}
-          setCursor={setCursor}
-        />
->>>>>>> master
         {enableCustomPlugin && (
           <CustomPlugin
             toggleCustomPlugin={toggleCustomPlugin}
