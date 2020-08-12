@@ -2,7 +2,7 @@
 
 // from developit
 function memo(fn, c = {}) {
-  return (p) => c[p] || (c[p] = fn(p));
+  return p => c[p] || (c[p] = fn(p));
 }
 
 // npm.im/greenlet
@@ -53,7 +53,7 @@ function greenlet(e) {
 }
 
 export const gzipSize = memo(
-  greenlet((code) => {
+  greenlet(code => {
     if (!self.pako)
       importScripts("https://unpkg.com/pako@1.0.11/dist/pako_deflate.min.js");
     const compressed = self.pako.gzip(code);

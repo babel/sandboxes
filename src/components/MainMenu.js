@@ -2,7 +2,7 @@ import React from "react";
 import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
 import { ShareModal } from "./ShareModal";
-import { ForkModal } from "./ForkModal";
+// import { ForkModal } from "./ForkModal";
 
 export function MainMenu({
   source,
@@ -16,9 +16,10 @@ export function MainMenu({
   setId,
   toggleForksVisible,
   forks,
+  showAST,
+  setShowAST,
 }) {
   const [shareLink, setShareLink] = React.useState("");
-  const [showShareLink, setShowShareLink] = React.useState(false);
   return (
     <Menu attached="top" inverted>
       <Menu.Item>
@@ -59,6 +60,12 @@ export function MainMenu({
               <Dropdown.Item>Import</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => setShowAST(showAST => !showAST)}
+            disabled={showAST}
+          >
+            Add AST Explorer
+          </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
             onClick={async () => {
@@ -92,7 +99,6 @@ export function MainMenu({
                   );
                   const link = await state.Link(id, setId);
                   setShareLink(link);
-                  setShowShareLink(true);
                 }}
               >
                 Share
@@ -105,7 +111,7 @@ export function MainMenu({
       {id && (
         <Menu.Item>
           <Button as="div" labelPosition="right">
-            <ForkModal
+            {/* <ForkModal
               onFork={async () => {
                 const state = new REPLState(
                   source,
@@ -120,7 +126,7 @@ export function MainMenu({
                   <Icon name="fork" />
                 </Button>
               }
-            />
+            /> */}
 
             <Label
               as="a"
