@@ -22,7 +22,7 @@ import {
   Segment,
   Divider,
   Checkbox,
-  Dropdown
+  Dropdown,
 } from "semantic-ui-react";
 
 export function CompiledOutput({
@@ -128,7 +128,7 @@ export function CompiledOutput({
     }
   }
 
-  const sourceCode = compiled ?.code ?? "";
+  const sourceCode = compiled?.code ?? "";
   return (
     <Fragment>
       <Grid.Row>
@@ -150,7 +150,9 @@ export function CompiledOutput({
                         <Dropdown.Item
                           text={`${timetravel.currentNode}`}
                           key={`${timetravel.code}`}
-                          onClick={() => setTimeTravelCode(`${timetravel.code}`)}
+                          onClick={() =>
+                            setTimeTravelCode(`${timetravel.code}`)
+                          }
                         />
                       ))}
                     </Dropdown.Menu>
@@ -160,7 +162,7 @@ export function CompiledOutput({
             </Menu.Menu>
             <Menu.Menu position="right">
               <Menu.Item>
-                {compiled ?.size}b, {gzip}b
+                {compiled?.size}b, {gzip}b
               </Menu.Item>
               <Menu.Item onClick={removeConfig}>
                 <Icon name="close" />
@@ -190,11 +192,11 @@ export function CompiledOutput({
                   value={
                     timeTravelCode !== undefined
                       ? timeTravelCode
-                      : compiled ?.code
+                      : compiled?.code
                   }
                   docName="result.js"
                   config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled ?.error ?? false}
+                  isError={compiled?.error ?? false}
                 />
               </Grid.Column>
             </Grid>
@@ -212,7 +214,6 @@ export function CompiledOutput({
         source={compiled ?.code ?? ""}
         setTimeTravelCode={setTimeTravelCode}
       /> */}
-
     </Fragment>
   );
 }
