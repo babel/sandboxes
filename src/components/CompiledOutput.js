@@ -147,6 +147,8 @@ export function CompiledOutput({
                         onClick={() => {
                           setTimeTravelCode(sourceCode);
                           setDisplayAtIndex("Source Output");
+
+                          // Source output is the first element
                           if (timeTravelIndex !== timeTravel.length) {
                             setTimeTravelIndex(1);
                           }
@@ -159,6 +161,11 @@ export function CompiledOutput({
                           onClick={() => {
                             setTimeTravelCode(`${timetravel.code}`);
                             setDisplayAtIndex(`${timetravel.currentNode}`);
+
+                            /* 
+                              Source output comes before the array, we 
+                              need to shift all the indices by +1
+                            */
                             if (timeTravelIndex !== timeTravel.length) {
                               setTimeTravelIndex(i + 1);
                             }
@@ -172,6 +179,10 @@ export function CompiledOutput({
               <Button
                 content="Next"
                 onClick={() => {
+                  /* 
+                    To get the original indices of the array
+                    we reverse the operation earlier.
+                  */
                   setDisplayAtIndex(
                     `${timeTravel[timeTravelIndex - 1] ?.currentNode}`
                   );
