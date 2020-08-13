@@ -11,10 +11,12 @@ function toBinary(string) {
 
 // source: https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
 function fromBinary(binary) {
+
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
+
   return String.fromCharCode(...new Uint16Array(bytes.buffer));
 }
 
@@ -116,6 +118,7 @@ class REPLState {
    */
   async New() {
     const url = `/api/v1/blobs/create`;
+
     try {
       const resp = await fetch(url, {
         method: "POST",

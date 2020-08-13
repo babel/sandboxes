@@ -8,17 +8,15 @@ export function Output({
   customPlugin,
   updateBabelConfig,
   removeBabelConfig,
+  index
 }) {
-  return babelConfig.map((config, index) => {
-    return (
-      <CompiledOutput
-        source={debouncedSource}
-        customPlugin={enableCustomPlugin ? customPlugin : undefined}
-        config={config}
-        key={index}
-        onConfigChange={config => updateBabelConfig(config, index)}
-        removeConfig={() => removeBabelConfig(index)}
-      />
-    );
-  });
+
+  return <CompiledOutput
+    source={debouncedSource}
+    customPlugin={enableCustomPlugin ? customPlugin : undefined}
+    config={babelConfig}
+    onConfigChange={config => updateBabelConfig(config, index)}
+    removeConfig={() => removeBabelConfig(index)}
+  />
+
 }

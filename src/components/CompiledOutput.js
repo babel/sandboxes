@@ -7,12 +7,6 @@ import { useDebounce } from "../utils/useDebounce";
 import Transition from "./Transitions";
 import { TimeTravel } from "./TimeTravel";
 
-import {
-  convertToBabelConfig,
-  //   importDefaultPlugins,
-  //   registerDefaultPlugins
-} from "./App";
-
 import { plugins, presets } from "../plugins-list";
 
 import {
@@ -25,6 +19,7 @@ import {
   Dropdown,
   Button,
 } from "semantic-ui-react";
+import { check, string } from "yargs";
 
 export function CompiledOutput({
   source,
@@ -34,44 +29,59 @@ export function CompiledOutput({
   removeConfig,
 }) {
   const [compiled, setCompiled] = useState(null);
+  const [stringConfig, setStringConfig] = useState(JSON.stringify(config, null, '\t'));
   const [gzip, setGzip] = useState(null);
   const debouncedPlugin = useDebounce(customPlugin, 125);
-
-  const [babelConfig, setBabelConfig] = useState(convertToBabelConfig(config));
 
   const [timeTravel, setTimeTravel] = useState(null);
   const [timeTravelCode, setTimeTravelCode] = useState();
   const [timeTravelIndex, setTimeTravelIndex] = useState(1);
   const [displayAtIndex, setDisplayAtIndex] = useState("Time Travel");
 
+  let saveConfig = () => {
+
+    let options = processOptions(config, debouncedPlugin);
+
+    const transitions = new Transition();
+    options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
+    setTimeTravel(transitions.getValue());
+
+    const { code } = Babel.transform(source, options);
+
+    gzipSize(code).then(s => setGzip(s));
+
+    setCompiled({
+      code,
+      size: new Blob([code], { type: "text/plain" }).size,
+    });
+
+  }
+
+  useEffect(saveConfig, [source, config, debouncedPlugin]);
+
   useEffect(() => {
+    setStringConfig(JSON.stringify(config, null, '\t'));
+  }, [config])
+
+  useEffect(() => {
+
     try {
-      let options = processOptions(babelConfig, debouncedPlugin);
-
-      const transitions = new Transition();
-      options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
-      setTimeTravel(transitions.getValue());
-
-      const { code } = Babel.transform(source, options);
-
-      gzipSize(code).then(s => setGzip(s));
-
-      setCompiled({
-        code,
-        size: new Blob([code], { type: "text/plain" }).size,
-      });
+      let sconfig = JSON.parse(stringConfig);
+      saveConfig(sconfig);
     } catch (e) {
       setCompiled({
         code: e.message,
         error: true,
       });
     }
-  }, [source, babelConfig, debouncedPlugin]);
+
+  }, [stringConfig])
 
   function displayAvailablePlugins() {
     return Object.keys(plugins).map(pluginName => {
       return (
-        <Segment>
+        <Segment
+          key={pluginName}>
           <Checkbox
             toggle
             name={pluginName}
@@ -87,7 +97,8 @@ export function CompiledOutput({
   function displayAvailablePresets() {
     return Object.keys(presets).map(presetName => {
       return (
-        <Segment>
+        <Segment
+          key={presetName}>
           <Checkbox
             toggle
             name={presetName}
@@ -101,36 +112,49 @@ export function CompiledOutput({
   }
 
   function handlePluginChange(reactEvent, checkbox) {
+
+    config.plugins = config.plugins || [];
     if (checkbox.checked) {
-      config.plugins.push(plugins[checkbox.name]);
+      config.plugins.push([plugins[checkbox.name].name, plugins[checkbox.name].defaultConfig]);
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
+      setStringConfig(JSON.stringify(config, null, '\t'));
     } else {
       config.plugins = config.plugins.filter(plugin => {
-        return plugin.name !== checkbox.name;
+        return plugin[0] !== checkbox.name;
       });
+      setStringConfig(JSON.stringify(config, null, '\t'));
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
     }
-    console.log(config);
-    console.log(babelConfig);
   }
 
   function handlePresetChange(reactEvent, checkbox) {
     if (checkbox.checked) {
-      config.presets.push(presets[checkbox.name]);
+      config.presets.push([presets[checkbox.name].name, presets[checkbox.name].defaultConfig]);
+      setStringConfig(JSON.stringify(config, null, '\t'));
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
     } else {
       config.presets = config.presets.filter(preset => {
-        return preset.name !== checkbox.name;
+        return preset[0] !== checkbox.name;
       });
+      setStringConfig(JSON.stringify(config, null, '\t'));
       onConfigChange(config);
-      setBabelConfig(convertToBabelConfig(config));
     }
   }
 
-  const sourceCode = compiled ?.code ?? "";
+  function handleStringConfigChange(configText) {
+
+    try {
+
+      let sConfig = JSON.parse(configText)
+      onConfigChange(sConfig);
+
+    } catch (e) {
+    }
+    setStringConfig(configText)
+  }
+
+
+  const sourceCode = compiled?.code ?? "";
   return (
     <Fragment>
       <Grid.Row>
@@ -184,9 +208,9 @@ export function CompiledOutput({
                     we reverse the operation earlier.
                   */
                   setDisplayAtIndex(
-                    `${timeTravel[timeTravelIndex - 1] ?.currentNode}`
+                    `${timeTravel[timeTravelIndex - 1]?.currentNode}`
                   );
-                  setTimeTravelCode(`${timeTravel[timeTravelIndex - 1] ?.code}`);
+                  setTimeTravelCode(`${timeTravel[timeTravelIndex - 1]?.code}`);
                   if (timeTravelIndex !== timeTravel.length) {
                     setTimeTravelIndex(timeTravelIndex + 1);
                   }
@@ -195,7 +219,7 @@ export function CompiledOutput({
             </Menu.Menu>
             <Menu.Menu position="right">
               <Menu.Item>
-                {compiled ?.size}b, {gzip}b
+                {compiled?.size}b, {gzip}b
               </Menu.Item>
               <Menu.Item onClick={removeConfig}>
                 <Icon name="close" />
@@ -209,12 +233,8 @@ export function CompiledOutput({
                 <Segment.Group piled>{displayAvailablePresets()}</Segment.Group>
                 <Wrapper>
                   <Config
-                    value={
-                      babelConfig === Object(babelConfig)
-                        ? JSON.stringify(babelConfig, null, "\t")
-                        : babelConfig
-                    }
-                    onChange={onConfigChange}
+                    value={stringConfig}
+                    onChange={handleStringConfigChange}
                     docName="config.json"
                     config={{ mode: "application/json" }}
                   />
@@ -225,11 +245,11 @@ export function CompiledOutput({
                   value={
                     timeTravelCode !== undefined
                       ? timeTravelCode
-                      : compiled ?.code
+                      : compiled?.code
                   }
                   docName="result.js"
                   config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled ?.error ?? false}
+                  isError={compiled?.error ?? false}
                 />
               </Grid.Column>
             </Grid>

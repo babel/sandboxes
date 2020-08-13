@@ -42,7 +42,10 @@ export function MainMenu({
             onClick={() =>
               setBabelConfig(configs => [
                 ...configs,
-                configs[configs.length - 1],
+                {
+                  "plugins": [],
+                  "presets": []
+                },
               ])
             }
           >
