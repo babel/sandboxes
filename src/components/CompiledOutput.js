@@ -183,7 +183,8 @@ export function CompiledOutput({
 
                       {timeTravel.map((timetravel, i) => (
                         < Dropdown.Item
-                          text={[timetravel.pluginAlias, timetravel.currentNode].join(' - ')}
+                          text={timetravel.currentNode}
+                          description={timetravel.pluginAlias}
                           onClick={() => {
                             setTimeTravelCode(`${timetravel.code}`);
                             setDisplayAtIndex(`${timetravel.currentNode}`);
