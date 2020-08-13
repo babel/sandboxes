@@ -77,10 +77,10 @@ class REPLState {
   static Decode(encodedState) {
     let jsonState = JSON.parse(encodedState);
     return new REPLState(
-      decodeBase64(jsonState.base64SourceKey),
-      decodeBase64(jsonState.base64PluginKey),
+      decodeBase64(jsonState.base64SourceKey || ""),
+      decodeBase64(jsonState.base64PluginKey || ""),
       jsonState.configIDs.map(configs => {
-        return decodeBase64(configs);
+        return decodeBase64(configs || "");
       })
     );
   }

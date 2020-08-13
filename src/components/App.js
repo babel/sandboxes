@@ -157,6 +157,7 @@ export const App = ({
         setId={setId}
         toggleForksVisible={toggleForksVisible}
         forks={forks}
+        setForks={setForks}
         showAST={showAST}
         setShowAST={setShowAST}
       />
