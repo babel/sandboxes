@@ -45,6 +45,8 @@ export function CompiledOutput({
 
     const transitions = new Transition();
     options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
+
+
     setTimeTravel(transitions.getValue());
 
     const { code } = Babel.transform(source, options);
@@ -176,8 +178,9 @@ export function CompiledOutput({
                       />
 
                       {timeTravel.map((timetravel, i) => (
-                        <Dropdown.Item
-                          text={`${timetravel.currentNode}`}
+                        < Dropdown.Item
+                          text={timetravel.currentNode}
+                          description={timetravel.pluginAlias}
                           onClick={() => {
                             setTimeTravelCode(`${timetravel.code}`);
                             setDisplayAtIndex(`${timetravel.currentNode}`);
