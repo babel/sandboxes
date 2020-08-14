@@ -43,8 +43,8 @@ export function MainMenu({
               setBabelConfig(configs => [
                 ...configs,
                 {
-                  "plugins": [],
-                  "presets": []
+                  plugins: [],
+                  presets: [],
                 },
               ])
             }

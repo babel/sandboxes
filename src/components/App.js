@@ -12,42 +12,9 @@ import { useDebounce } from "../utils/useDebounce";
 import VizOutput from "./AST/Viz";
 
 import { Grid, Tab } from "semantic-ui-react";
-import { plugins } from "../plugins-list";
-
+import { importDefaultPlugins } from "./plugins";
 
 window.babel = Babel;
-
-function importDefaultPlugins() {
-  Object.keys(plugins).forEach(pluginName => {
-    const script = document.createElement("script");
-    script.src = plugins[pluginName].fileLocation;
-    script.async = false;
-    document.head.appendChild(script);
-  });
-}
-
-function registerDefaultPlugins() {
-  Babel.registerPlugin(
-    "babel-plugin-polyfill-corejs3",
-    window.babelPluginPolyfillCorejs3
-  );
-  Babel.registerPlugin(
-    "babel-plugin-polyfill-corejs2",
-    window.babelPluginPolyfillCorejs2
-  );
-  Babel.registerPlugin(
-    "@babel/plugin-external-helpers",
-    window._babel_pluginExternalHelpers
-  );
-  Babel.registerPlugin(
-    "babel-plugin-polyfill-es-shims",
-    window.babelPluginPolyfillEsShims
-  );
-  Babel.registerPlugin(
-    "babel-plugin-polyfill-regenerator",
-    window.babelPluginPolyfillRegenerator
-  );
-}
 
 export const App = ({
   defaultSource,
@@ -88,10 +55,8 @@ export const App = ({
   const [showAST, setShowAST] = useState(true);
 
   const updateBabelConfig = useCallback((config, index) => {
-
     jsonConfig[index] = config;
     setJsonConfig(jsonConfig);
-
   }, []);
 
   const removeBabelConfig = useCallback(index => {
@@ -113,39 +78,38 @@ export const App = ({
   }, [editorRef, cursorAST]);
 
   importDefaultPlugins();
-  registerDefaultPlugins();
 
   useEffect(() => {
-
-    setPanes(jsonConfig.map((config, index) => {
-
-      return {
-        menuItem: 'Config ' + index, render: () =>
-          <><Output
-            babelConfig={config}
-            debouncedSource={debouncedSource}
-            enableCustomPlugin={enableCustomPlugin}
-            customPlugin={customPlugin}
-            updateBabelConfig={updateBabelConfig}
-            removeBabelConfig={removeBabelConfig}
-            index={index}
-          />
-            {showAST && (
-              <VizOutput
-                code={debouncedSource}
-                cursor={debouncedCursor}
-                setCursorAST={setCursorAST}
-                plugins={plugins}
-                setShowAST={setShowAST}
+    setPanes(
+      jsonConfig.map((config, index) => {
+        return {
+          menuItem: "Config " + index,
+          render: () => (
+            <>
+              <Output
+                babelConfig={config}
+                debouncedSource={debouncedSource}
+                enableCustomPlugin={enableCustomPlugin}
+                customPlugin={customPlugin}
+                updateBabelConfig={updateBabelConfig}
+                removeBabelConfig={removeBabelConfig}
+                index={index}
               />
-            )
-            }
-          </>
-      }
-    }));
-
+              {showAST && (
+                <VizOutput
+                  code={debouncedSource}
+                  cursor={debouncedCursor}
+                  setCursorAST={setCursorAST}
+                  plugins={plugins}
+                  setShowAST={setShowAST}
+                />
+              )}
+            </>
+          ),
+        };
+      })
+    );
   }, [jsonConfig]);
-
 
   return (
     <Root>
@@ -188,7 +152,6 @@ export const App = ({
           />
         )}
         <Tab panes={panes} />
-
       </Grid>
     </Root>
   );

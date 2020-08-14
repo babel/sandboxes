@@ -7,7 +7,7 @@ import { useDebounce } from "../utils/useDebounce";
 import Transition from "./Transitions";
 import { TimeTravel } from "./TimeTravel";
 
-import { plugins, presets } from "../plugins-list";
+import { plugins, presets } from "./plugins";
 
 import {
   Grid,
@@ -29,7 +29,9 @@ export function CompiledOutput({
   removeConfig,
 }) {
   const [compiled, setCompiled] = useState(null);
-  const [stringConfig, setStringConfig] = useState(JSON.stringify(config, null, '\t'));
+  const [stringConfig, setStringConfig] = useState(
+    JSON.stringify(config, null, "\t")
+  );
   const [gzip, setGzip] = useState(null);
   const debouncedPlugin = useDebounce(customPlugin, 125);
 
@@ -39,7 +41,6 @@ export function CompiledOutput({
   const [displayAtIndex, setDisplayAtIndex] = useState("Time Travel");
 
   let saveConfig = () => {
-
     let options = processOptions(config, debouncedPlugin);
 
     const transitions = new Transition();
@@ -54,17 +55,15 @@ export function CompiledOutput({
       code,
       size: new Blob([code], { type: "text/plain" }).size,
     });
-
-  }
+  };
 
   useEffect(saveConfig, [source, config, debouncedPlugin]);
 
   useEffect(() => {
-    setStringConfig(JSON.stringify(config, null, '\t'));
-  }, [config])
+    setStringConfig(JSON.stringify(config, null, "\t"));
+  }, [config]);
 
   useEffect(() => {
-
     try {
       let sconfig = JSON.parse(stringConfig);
       saveConfig(sconfig);
@@ -74,14 +73,12 @@ export function CompiledOutput({
         error: true,
       });
     }
-
-  }, [stringConfig])
+  }, [stringConfig]);
 
   function displayAvailablePlugins() {
     return Object.keys(plugins).map(pluginName => {
       return (
-        <Segment
-          key={pluginName}>
+        <Segment key={pluginName}>
           <Checkbox
             toggle
             name={pluginName}
@@ -97,8 +94,7 @@ export function CompiledOutput({
   function displayAvailablePresets() {
     return Object.keys(presets).map(presetName => {
       return (
-        <Segment
-          key={presetName}>
+        <Segment key={presetName}>
           <Checkbox
             toggle
             name={presetName}
@@ -112,47 +108,47 @@ export function CompiledOutput({
   }
 
   function handlePluginChange(reactEvent, checkbox) {
-
     config.plugins = config.plugins || [];
     if (checkbox.checked) {
-      config.plugins.push([plugins[checkbox.name].name, plugins[checkbox.name].defaultConfig]);
+      config.plugins.push([
+        plugins[checkbox.name].name,
+        plugins[checkbox.name].defaultConfig,
+      ]);
       onConfigChange(config);
-      setStringConfig(JSON.stringify(config, null, '\t'));
+      setStringConfig(JSON.stringify(config, null, "\t"));
     } else {
       config.plugins = config.plugins.filter(plugin => {
         return plugin[0] !== checkbox.name;
       });
-      setStringConfig(JSON.stringify(config, null, '\t'));
+      setStringConfig(JSON.stringify(config, null, "\t"));
       onConfigChange(config);
     }
   }
 
   function handlePresetChange(reactEvent, checkbox) {
     if (checkbox.checked) {
-      config.presets.push([presets[checkbox.name].name, presets[checkbox.name].defaultConfig]);
-      setStringConfig(JSON.stringify(config, null, '\t'));
+      config.presets.push([
+        presets[checkbox.name].name,
+        presets[checkbox.name].defaultConfig,
+      ]);
+      setStringConfig(JSON.stringify(config, null, "\t"));
       onConfigChange(config);
     } else {
       config.presets = config.presets.filter(preset => {
         return preset[0] !== checkbox.name;
       });
-      setStringConfig(JSON.stringify(config, null, '\t'));
+      setStringConfig(JSON.stringify(config, null, "\t"));
       onConfigChange(config);
     }
   }
 
   function handleStringConfigChange(configText) {
-
     try {
-
-      let sConfig = JSON.parse(configText)
+      let sConfig = JSON.parse(configText);
       onConfigChange(sConfig);
-
-    } catch (e) {
-    }
-    setStringConfig(configText)
+    } catch (e) {}
+    setStringConfig(configText);
   }
-
 
   const sourceCode = compiled?.code ?? "";
   return (
@@ -186,8 +182,8 @@ export function CompiledOutput({
                             setTimeTravelCode(`${timetravel.code}`);
                             setDisplayAtIndex(`${timetravel.currentNode}`);
 
-                            /* 
-                              Source output comes before the array, we 
+                            /*
+                              Source output comes before the array, we
                               need to shift all the indices by +1
                             */
                             if (timeTravelIndex !== timeTravel.length) {
@@ -203,7 +199,7 @@ export function CompiledOutput({
               <Button
                 content="Next"
                 onClick={() => {
-                  /* 
+                  /*
                     To get the original indices of the array
                     we reverse the operation earlier.
                   */

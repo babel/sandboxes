@@ -11,7 +11,6 @@ function toBinary(string) {
 
 // source: https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
 function fromBinary(binary) {
-
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = binary.charCodeAt(i);
@@ -85,6 +84,40 @@ class REPLState {
         return decodeBase64(configs || "");
       })
     );
+  }
+
+  /**
+   * list returns a list of names bases off the
+   * key. For internal use only.
+   * @param {string}key
+   * @returns {string[]} List of the desired key.
+   */
+  list(key) {
+    const s = new Set();
+    const tConfigs = this.configs.map(conf => JSON.parse(conf));
+    tConfigs.forEach(conf => {
+      const arr = conf?.[key];
+      // Take advantage of JS short circuiting.
+      if (arr === undefined || !Array.isArray(arr) || arr.length < 1) {
+        return;
+      }
+      // Then grab their names.
+      arr.forEach(val => {
+        const name = val?.name;
+        if (name === undefined) {
+          return;
+        }
+        s.add(name);
+      });
+    });
+    return Array.from(s);
+  }
+
+  PluginList() {
+    return this.list("plugins");
+  }
+  PresetList() {
+    return this.list("presets");
   }
 
   /**
