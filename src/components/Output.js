@@ -8,6 +8,8 @@ export function Output({
   customPlugin,
   updateBabelConfig,
   removeBabelConfig,
+  debouncedCursor,
+  setCursorAST,
   index,
 }) {
   return (
@@ -17,6 +19,8 @@ export function Output({
       config={babelConfig}
       onConfigChange={config => updateBabelConfig(config, index)}
       removeConfig={() => removeBabelConfig(index)}
+      cursor={debouncedCursor}
+      setCursorAST={setCursorAST}
     />
   );
 }

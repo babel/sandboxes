@@ -1,13 +1,13 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import * as Babel from "@babel/standalone";
 import { processOptions } from "../standalone";
 import { gzipSize } from "../gzip";
 import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
 import Transition from "./Transitions";
-import { TimeTravel } from "./TimeTravel";
 
 import { plugins, presets } from "./plugins";
+import VizOutput from "./AST/Viz";
 
 import {
   Grid,
@@ -19,7 +19,6 @@ import {
   Dropdown,
   Button,
 } from "semantic-ui-react";
-import { check, string } from "yargs";
 
 export function CompiledOutput({
   source,
@@ -27,6 +26,8 @@ export function CompiledOutput({
   config,
   onConfigChange,
   removeConfig,
+  cursor,
+  setCursorAST,
 }) {
   const [compiled, setCompiled] = useState(null);
   const [stringConfig, setStringConfig] = useState(
@@ -40,16 +41,24 @@ export function CompiledOutput({
   const [timeTravelIndex, setTimeTravelIndex] = useState(1);
   const [displayAtIndex, setDisplayAtIndex] = useState("Time Travel");
 
-  let saveConfig = () => {
+  const [showAST, setShowAST] = useState(false);
+  const [showJSON, setShowJSON] = useState(false);
+
+  let saveConfig = useCallback(() => {
     let options = processOptions(config, debouncedPlugin);
 
     const transitions = new Transition();
     options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
 
-
     setTimeTravel(transitions.getValue());
 
-    const { code } = Babel.transform(source, options);
+    let code = "";
+
+    try {
+      code = Babel.transform(source, options).code;
+    } catch (error) {
+      code = error.message;
+    }
 
     gzipSize(code).then(s => setGzip(s));
 
@@ -57,7 +66,7 @@ export function CompiledOutput({
       code,
       size: new Blob([code], { type: "text/plain" }).size,
     });
-  };
+  }, [config, debouncedPlugin, source]);
 
   useEffect(saveConfig, [source, config, debouncedPlugin]);
 
@@ -75,7 +84,24 @@ export function CompiledOutput({
         error: true,
       });
     }
-  }, [stringConfig]);
+  }, [stringConfig, saveConfig]);
+
+  const configOpts = config.plugins
+    .map(arr =>
+      arr[0]
+        .replace("@babel/plugin-proposal-", "")
+        .replace("babel-plugin-", "")
+        // kebab to camel
+        .replace(/-./g, x => x.toUpperCase()[1])
+    )
+    .concat(config.presets.map(arr => arr[0]));
+
+  const pluginsAST = useMemo(() => {
+    if (timeTravel === null) return configOpts;
+    if (timeTravelIndex === 1) return configOpts;
+    if (timeTravelIndex === timeTravel.length) return configOpts;
+    return timeTravel.slice(0, timeTravelIndex).map(t => t.pluginAlias);
+  }, [timeTravel, timeTravelIndex, configOpts]);
 
   function displayAvailablePlugins() {
     return Object.keys(plugins).map(pluginName => {
@@ -154,9 +180,9 @@ export function CompiledOutput({
 
   const sourceCode = compiled?.code ?? "";
   return (
-    <Fragment>
-      <Grid.Row>
-        <Grid.Column width={16}>
+    <Grid.Row>
+      <Grid columns={2}>
+        <Grid.Column width={8}>
           <Menu attached="top" tabular inverted>
             <Menu.Item>input.json</Menu.Item>
             <Menu.Menu position="left">
@@ -178,7 +204,8 @@ export function CompiledOutput({
                       />
 
                       {timeTravel.map((timetravel, i) => (
-                        < Dropdown.Item
+                        <Dropdown.Item
+                          key={i}
                           text={timetravel.currentNode}
                           description={timetravel.pluginAlias}
                           onClick={() => {
@@ -202,10 +229,10 @@ export function CompiledOutput({
               <Button
                 content="Next"
                 onClick={() => {
-                  /*
-                    To get the original indices of the array
-                    we reverse the operation earlier.
-                  */
+                  /* 
+                  To get the original indices of the array
+                  we reverse the operation earlier.
+                */
                   setDisplayAtIndex(
                     `${timeTravel[timeTravelIndex - 1]?.currentNode}`
                   );
@@ -216,6 +243,29 @@ export function CompiledOutput({
                 }}
               />
             </Menu.Menu>
+          </Menu>
+        </Grid.Column>
+        <Grid.Column width={8}>
+          <Menu attached="top" tabular inverted>
+            <Menu.Menu position="left">
+              <Menu.Item onClick={() => setShowAST(false)}>Output</Menu.Item>
+              <Menu.Item>
+                <Dropdown
+                  onClick={() => {
+                    setShowAST(true);
+                  }}
+                  text={"AST"}
+                >
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      onClick={() => setShowJSON(showJSON => !showJSON)}
+                    >
+                      {showJSON ? "Explorer" : "JSON"}
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Menu.Item>
+            </Menu.Menu>
             <Menu.Menu position="right">
               <Menu.Item>
                 {compiled?.size}b, {gzip}b
@@ -225,47 +275,47 @@ export function CompiledOutput({
               </Menu.Item>
             </Menu.Menu>
           </Menu>
-          <Segment inverted attached="bottom">
-            <Grid columns={2} relaxed="very">
-              <Grid.Column>
-                <Segment.Group piled>{displayAvailablePlugins()}</Segment.Group>
-                <Segment.Group piled>{displayAvailablePresets()}</Segment.Group>
-                <Wrapper>
-                  <Config
-                    value={stringConfig}
-                    onChange={handleStringConfigChange}
-                    docName="config.json"
-                    config={{ mode: "application/json" }}
-                  />
-                </Wrapper>
-              </Grid.Column>
-              <Grid.Column>
-                <Code
-                  value={
-                    timeTravelCode !== undefined
-                      ? timeTravelCode
-                      : compiled?.code
-                  }
-                  docName="result.js"
-                  config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled?.error ?? false}
-                />
-              </Grid.Column>
-            </Grid>
-            <Divider vertical>
-              <Icon name="arrow right" />
-            </Divider>
-          </Segment>
         </Grid.Column>
-      </Grid.Row>
-
-      {/* <TimeTravel
-        timeTravel={timeTravel}
-        setTimeTravel={setTimeTravel}
-        removeConfig={removeConfig}
-        source={compiled ?.code ?? ""}
-        setTimeTravelCode={setTimeTravelCode}
-      /> */}
-    </Fragment>
+      </Grid>
+      <Segment inverted attached="bottom">
+        <Grid columns={2} relaxed="very">
+          <Grid.Column>
+            <Segment.Group piled>{displayAvailablePlugins()}</Segment.Group>
+            <Segment.Group piled>{displayAvailablePresets()}</Segment.Group>
+            <Wrapper>
+              <Config
+                value={stringConfig}
+                onChange={handleStringConfigChange}
+                docName="config.json"
+                config={{ mode: "application/json" }}
+              />
+            </Wrapper>
+          </Grid.Column>
+          <Grid.Column>
+            {showAST ? (
+              <VizOutput
+                code={source}
+                cursor={cursor}
+                setCursorAST={setCursorAST}
+                showJSON={showJSON}
+                plugins={pluginsAST}
+              />
+            ) : (
+              <Code
+                value={
+                  timeTravelCode !== undefined ? timeTravelCode : compiled?.code
+                }
+                docName="result.js"
+                config={{ readOnly: true, lineWrapping: true }}
+                isError={compiled?.error ?? false}
+              />
+            )}
+          </Grid.Column>
+        </Grid>
+        <Divider vertical>
+          <Icon name="arrow right" />
+        </Divider>
+      </Segment>
+    </Grid.Row>
   );
 }

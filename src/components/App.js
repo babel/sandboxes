@@ -9,7 +9,6 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
-import VizOutput from "./AST/Viz";
 
 import { Grid, Tab } from "semantic-ui-react";
 import { importDefaultPlugins } from "./plugins";
@@ -50,14 +49,13 @@ export const App = ({
   const debouncedCursor = useDebounce(cursor, 125);
   const editorRef = useRef(null);
 
-  // Array of plugin names for AST Viz integration
-  const [plugins, setPlugins] = useState(["doExpressions"]);
-  const [showAST, setShowAST] = useState(true);
-
-  const updateBabelConfig = useCallback((config, index) => {
-    jsonConfig[index] = config;
-    setJsonConfig(jsonConfig);
-  }, []);
+  const updateBabelConfig = useCallback(
+    (config, index) => {
+      jsonConfig[index] = config;
+      setJsonConfig(jsonConfig);
+    },
+    [jsonConfig]
+  );
 
   const removeBabelConfig = useCallback(index => {
     setJsonConfig(configs => configs.filter((c, i) => index !== i));
@@ -85,31 +83,31 @@ export const App = ({
         return {
           menuItem: "Config " + index,
           render: () => (
-            <>
-              <Output
-                babelConfig={config}
-                debouncedSource={debouncedSource}
-                enableCustomPlugin={enableCustomPlugin}
-                customPlugin={customPlugin}
-                updateBabelConfig={updateBabelConfig}
-                removeBabelConfig={removeBabelConfig}
-                index={index}
-              />
-              {showAST && (
-                <VizOutput
-                  code={debouncedSource}
-                  cursor={debouncedCursor}
-                  setCursorAST={setCursorAST}
-                  plugins={plugins}
-                  setShowAST={setShowAST}
-                />
-              )}
-            </>
+            <Output
+              babelConfig={config}
+              enableCustomPlugin={enableCustomPlugin}
+              customPlugin={customPlugin}
+              updateBabelConfig={updateBabelConfig}
+              removeBabelConfig={removeBabelConfig}
+              debouncedSource={debouncedSource}
+              debouncedCursor={debouncedCursor}
+              setCursorAST={setCursorAST}
+              index={index}
+            />
           ),
         };
       })
     );
-  }, [jsonConfig]);
+  }, [
+    jsonConfig,
+    enableCustomPlugin,
+    customPlugin,
+    updateBabelConfig,
+    removeBabelConfig,
+    debouncedSource,
+    debouncedCursor,
+    setCursorAST,
+  ]);
 
   return (
     <Root>
@@ -126,8 +124,6 @@ export const App = ({
         toggleForksVisible={toggleForksVisible}
         forks={forks}
         setForks={setForks}
-        showAST={showAST}
-        setShowAST={setShowAST}
       />
 
       <Grid celled="internally">
@@ -138,11 +134,7 @@ export const App = ({
           source={source}
           ref={editorRef}
           setSource={setSource}
-          setCursor={setCursorAST}
-          size={size}
-          gzip={gzip}
-          source={source}
-          setSource={setSource}
+          setCursor={setCursor}
         />
         {enableCustomPlugin && (
           <CustomPlugin
@@ -151,7 +143,7 @@ export const App = ({
             setCustomPlugin={setCustomPlugin}
           />
         )}
-        <Tab panes={panes} />
+        <Tab panes={panes} style={{ width: "100%" }} />
       </Grid>
     </Root>
   );

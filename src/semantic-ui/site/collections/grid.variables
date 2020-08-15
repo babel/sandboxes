@@ -3,3 +3,4 @@
 *******************************/
 
 @celledBorderColor: #1d2025;
+@gutterWidth: 0;
