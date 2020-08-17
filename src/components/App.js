@@ -80,8 +80,16 @@ export const App = ({
   useEffect(() => {
     setPanes(
       jsonConfig.map((config, index) => {
+
+        let name;
+        if (!index) {
+          name = 'config.json';
+        } else {
+          name = `config_${index}.json`
+        }
+
         return {
-          menuItem: "Config " + index,
+          menuItem: name,
           render: () => (
             <Output
               babelConfig={config}
@@ -126,16 +134,28 @@ export const App = ({
         setForks={setForks}
       />
 
+      <Grid divided>
+        <Grid.Row>
+          <Grid.Column width='5'>
+            <Input
+              size={size}
+              gzip={gzip}
+              source={source}
+              ref={editorRef}
+              setSource={setSource}
+              setCursor={setCursor}
+            />
+          </Grid.Column>
+          <Grid.Column width='11' >
+
+            <Tab panes={panes} menu={{ color: "black", inverted: true, tabular: false, attached: true }}
+            />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+
       <Grid celled="internally">
         {forksVisible && <Forks forks={forks} />}
-        <Input
-          size={size}
-          gzip={gzip}
-          source={source}
-          ref={editorRef}
-          setSource={setSource}
-          setCursor={setCursor}
-        />
         {enableCustomPlugin && (
           <CustomPlugin
             toggleCustomPlugin={toggleCustomPlugin}
@@ -143,7 +163,6 @@ export const App = ({
             setCustomPlugin={setCustomPlugin}
           />
         )}
-        <Tab panes={panes} style={{ width: "100%" }} />
       </Grid>
     </Root>
   );

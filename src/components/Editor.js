@@ -5,7 +5,7 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 
 const StyledEditor = styled(CodeMirror)`
   .CodeMirror {
-    background-color: #141618;
+    background-color: #2B2B2B;
     height: inherit;
     padding: 10px;
   }
@@ -34,7 +34,7 @@ export const Editor = forwardRef((props, ref) => {
       }}
       options={{
         scrollbarStyle: null,
-        theme: "material",
+        theme: "darcula",
         ...options.config,
       }}
       style={style}

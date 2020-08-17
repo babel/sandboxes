@@ -2,4 +2,4 @@
     User Variable Overrides
 *******************************/
 @solidWhiteBorderColor: #141618;
-@invertedBackground: #141618;
+@invertedBackground: #2b2b2b;
