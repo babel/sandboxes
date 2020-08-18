@@ -4,8 +4,8 @@ Usage:
 */
 
 import React from "react";
+import { Markdown } from "./styles";
 import spec from "../spec.json";
-import ReactMarkdown from "react-markdown";
 
 /**
  * Find the node and its parents from spec.json
@@ -35,7 +35,7 @@ export const lookUpNodeType = nodeType => {
 export default function UglyPopup({ def }) {
   return def.map(nodeDef => (
     <div className="nodeDef" key={nodeDef.content}>
-      <ReactMarkdown source={nodeDef.chunk} />
+      <Markdown source={nodeDef.chunk} />
     </div>
   ));
 }

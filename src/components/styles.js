@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import ReactMarkdown from "react-markdown";
 import { Accordion } from "semantic-ui-react";
 import { Editor } from "./Editor";
 
@@ -26,6 +27,18 @@ const HighlightedSubAccordion = styled(Accordion.Accordion)`
   background: ${props => (props.highlight ? "#ffff99" : "#ffffff")} !important;
 `;
 
+const Markdown = styled(ReactMarkdown)`
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    font-size: 15px;
+  }
+`;
+
 export {
   Root,
   Wrapper,
@@ -34,4 +47,5 @@ export {
   StyledAccordion,
   StyledAccordionTitle,
   HighlightedSubAccordion,
+  Markdown,
 };
