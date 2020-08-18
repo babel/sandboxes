@@ -1,5 +1,5 @@
 import * as Babel from "@babel/standalone";
-import { plugins } from "./plugins-list";
+
 /**
  * camelFromKebab cases returns a camel case formatted string
  * from a kebab case string
@@ -78,11 +78,5 @@ export function loadPlugin(name) {
 export function loadPreset(name) {
   loadItem(name, presetName => {
     Babel.registerPreset(name, window[presetName]);
-  });
-}
-
-export function importDefaultPlugins() {
-  Object.keys(plugins).forEach(pluginName => {
-    loadPlugin(pluginName);
   });
 }

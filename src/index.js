@@ -3,8 +3,13 @@ import { render } from "react-dom";
 import { App } from "./components/App";
 import { extractID, isShareLink, REPLState } from "./state";
 
+import * as Babel from "@babel/standalone";
+import { addDefaultPlugins } from "./plugins";
+
 // css
 import "semantic-ui-less/semantic.less";
+
+window.babel = Babel;
 
 // If we want to be able to easily replace a codesandbox template via Define API later...
 // const BABEL_CONFIG = require("!raw-loader!../config.json");
@@ -81,6 +86,7 @@ async function getState() {
 }
 
 (async () => {
+  addDefaultPlugins();
   const state = await getState();
   render(
     <App

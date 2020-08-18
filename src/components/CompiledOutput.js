@@ -6,7 +6,7 @@ import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
 import Transition from "./Transitions";
 
-import { plugins, presets } from "./plugins";
+import { plugins, presets } from "../plugins";
 import VizOutput from "./AST/Viz";
 
 import {
@@ -228,7 +228,7 @@ export function CompiledOutput({
               <Button
                 content="Next"
                 onClick={() => {
-                  /* 
+                  /*
                   To get the original indices of the array
                   we reverse the operation earlier.
                 */

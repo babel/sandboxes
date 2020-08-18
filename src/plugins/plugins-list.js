@@ -1,3 +1,5 @@
+import * as Babel from "@babel/standalone";
+
 // If you want to add custom plugins or presets, you can register them
 // at plugins-list.js in dependencies
 
@@ -74,3 +76,23 @@ export const presets = {
     defaultConfig: {},
   },
 };
+
+const pluginMap = new Map([
+  ["babel-plugin-polyfill-corejs3", "babelPluginPolyfillCorejs3"],
+  ["babel-plugin-polyfill-corejs2", "babelPluginPolyfillCorejs2"],
+  ["@babel/plugin-external-helpers", "_babel_pluginExternalHelpers"],
+  ["babel-plugin-polyfill-es-shims", "babelPluginPolyfillEsShims"],
+  ["babel-plugin-polyfill-regenerator", "babelPluginPolyfillRegenerator"],
+]);
+
+export function addDefaultPlugins() {
+  Object.keys(plugins).forEach(pluginName => {
+    const script = document.createElement("script");
+    script.src = plugins[pluginName].fileLocation;
+    script.async = true;
+    script.addEventListener("load", () => {
+      Babel.registerPlugin(pluginName, window[pluginMap.get(pluginName)]);
+    });
+    document.head.appendChild(script);
+  });
+}

@@ -11,7 +11,7 @@ export const Input = forwardRef((props, ref) => {
         <Menu.Menu position="right">
           <Menu.Item>
             {size}b, {gzip}b
-            </Menu.Item>
+          </Menu.Item>
         </Menu.Menu>
       </Menu>
       <Segment inverted attached="bottom">

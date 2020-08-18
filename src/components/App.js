@@ -11,7 +11,6 @@ import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
 
 import { Grid, Tab } from "semantic-ui-react";
-import { importDefaultPlugins } from "./plugins";
 
 window.babel = Babel;
 
@@ -74,8 +73,6 @@ export const App = ({
       });
     }
   }, [editorRef, cursorAST]);
-
-  importDefaultPlugins();
 
   useEffect(() => {
     setPanes(
