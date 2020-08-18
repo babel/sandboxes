@@ -80,12 +80,11 @@ export const App = ({
   useEffect(() => {
     setPanes(
       jsonConfig.map((config, index) => {
-
         let name;
         if (!index) {
-          name = 'config.json';
+          name = "config.json";
         } else {
-          name = `config_${index}.json`
+          name = `config_${index}.json`;
         }
 
         return {
@@ -132,11 +131,12 @@ export const App = ({
         toggleForksVisible={toggleForksVisible}
         forks={forks}
         setForks={setForks}
+        configsCount={jsonConfig.length}
       />
 
       <Grid divided>
         <Grid.Row>
-          <Grid.Column width='5'>
+          <Grid.Column width="5">
             <Input
               size={size}
               gzip={gzip}
@@ -146,9 +146,15 @@ export const App = ({
               setCursor={setCursor}
             />
           </Grid.Column>
-          <Grid.Column width='11' >
-
-            <Tab panes={panes} menu={{ color: "black", inverted: true, tabular: false, attached: true }}
+          <Grid.Column width="11">
+            <Tab
+              panes={panes}
+              menu={{
+                color: "black",
+                inverted: true,
+                tabular: false,
+                attached: true,
+              }}
             />
           </Grid.Column>
         </Grid.Row>

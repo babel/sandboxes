@@ -5,7 +5,6 @@ import { gzipSize } from "../gzip";
 import { Wrapper, Code, Config } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
 import Transition from "./Transitions";
-import { Input } from "./Input";
 
 import { plugins, presets } from "./plugins";
 import VizOutput from "./AST/Viz";
@@ -175,7 +174,7 @@ export function CompiledOutput({
     try {
       let sConfig = JSON.parse(configText);
       onConfigChange(sConfig);
-    } catch (e) { }
+    } catch (e) {}
     setStringConfig(configText);
   }
 
@@ -249,8 +248,22 @@ export function CompiledOutput({
           <Menu attached="top" tabular inverted>
             <Menu.Menu position="left">
               <Menu.Item onClick={() => setShowAST(false)}>Output</Menu.Item>
-              <Menu.Item onClick={() => { setShowJSON(false); setShowAST(true) }}>AST Explorer</Menu.Item>
-              <Menu.Item onClick={() => { setShowJSON(true); setShowAST(true) }}>AST JSON</Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  setShowJSON(false);
+                  setShowAST(true);
+                }}
+              >
+                AST Explorer
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  setShowJSON(true);
+                  setShowAST(true);
+                }}
+              >
+                AST JSON
+              </Menu.Item>
             </Menu.Menu>
             <Menu.Menu position="right">
               <Menu.Item>
@@ -287,15 +300,15 @@ export function CompiledOutput({
                 plugins={pluginsAST}
               />
             ) : (
-                <Code
-                  value={
-                    timeTravelCode !== undefined ? timeTravelCode : compiled?.code
-                  }
-                  docName="result.js"
-                  config={{ readOnly: true, lineWrapping: true }}
-                  isError={compiled?.error ?? false}
-                />
-              )}
+              <Code
+                value={
+                  timeTravelCode !== undefined ? timeTravelCode : compiled?.code
+                }
+                docName="result.js"
+                config={{ readOnly: true, lineWrapping: true }}
+                isError={compiled?.error ?? false}
+              />
+            )}
           </Grid.Column>
         </Grid>
         <Divider vertical>

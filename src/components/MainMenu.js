@@ -17,6 +17,7 @@ export function MainMenu({
   toggleForksVisible,
   forks,
   setForks,
+  configsCount,
 }) {
   const [shareLink, setShareLink] = React.useState("");
   return (
@@ -37,6 +38,7 @@ export function MainMenu({
             Load Example
           </Dropdown.Item>
           <Dropdown.Item
+            disabled={configsCount >= 5}
             onClick={() =>
               setBabelConfig(configs => [
                 ...configs,
