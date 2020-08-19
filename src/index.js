@@ -4,7 +4,7 @@ import { App } from "./components/App";
 import { extractID, isShareLink, REPLState } from "./state";
 
 import * as Babel from "@babel/standalone";
-import { addDefaultPlugins } from "./plugins";
+import { addDefaultPlugins, loadPlugin, loadPreset } from "./plugins";
 
 // css
 import "semantic-ui-less/semantic.less";
@@ -88,6 +88,8 @@ async function getState() {
 (async () => {
   addDefaultPlugins();
   const state = await getState();
+  state.PluginList().forEach(plugin => loadPlugin(plugin));
+  state.PresetList().forEach(preset => loadPreset(preset));
   render(
     <App
       defaultConfig={state.configs.map(conf => JSON.parse(conf))}

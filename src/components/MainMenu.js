@@ -3,6 +3,7 @@ import { Dropdown, Icon, Menu, Button, Label } from "semantic-ui-react";
 import REPLState from "../state/REPLState.js";
 import { ShareModal } from "./ShareModal";
 import { ForkModal } from "./ForkModal";
+import { loadPlugin, loadPreset } from "../plugins/addPlugin.js";
 
 export function MainMenu({
   source,
@@ -72,6 +73,9 @@ export function MainMenu({
                 enableCustomPlugin ? customPlugin : "",
                 jsonConfig.map(config => JSON.stringify(config))
               );
+              state.PluginList().forEach(plugin => loadPlugin(plugin));
+              state.PresetList().forEach(preset => loadPreset(preset));
+
               // Check if the id exists
               if (!id) {
                 // If it doesn't, then this config has not been saved before

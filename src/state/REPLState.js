@@ -105,6 +105,10 @@ class REPLState {
       }
       // Then grab their names.
       arr.forEach(val => {
+        if (Array.isArray(val) && val.length > 0) {
+          s.add(val[0]);
+          return;
+        }
         const name = val?.name;
         if (name === undefined) {
           return;

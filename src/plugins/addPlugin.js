@@ -1,4 +1,5 @@
 import * as Babel from "@babel/standalone";
+import loadedItems from "./loadedItems";
 
 /**
  * camelFromKebab cases returns a camel case formatted string
@@ -48,7 +49,8 @@ function sanitizePluginName(pluginName) {
  *
  *
  * @callback pluginLoadedCallback
- * @param {name} pluginName
+ * @param {boolean} pluginLoaded
+ * @param {string} pluginName
  */
 
 /**
@@ -57,6 +59,10 @@ function sanitizePluginName(pluginName) {
  * @param {pluginLoadedCallback} callback
  */
 function loadItem(name, callback) {
+  if (loadedItems.has(name)) {
+    return;
+  }
+  loadedItems.add(name);
   const script = document.createElement("script");
   script.src = `https://bundle.run/${name}`;
   script.async = true;

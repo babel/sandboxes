@@ -43,7 +43,13 @@ export function processOptions(options, customPlugin) {
 
   // Parse preset names
   const presets = (options.presets || []).map(presetName => {
-    const preset = loadBuiltin(availablePresets, presetName);
+    let preset;
+    try {
+      preset = loadBuiltin(availablePresets, presetName);
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
 
     if (preset) {
       // workaround for babel issue
@@ -66,8 +72,13 @@ export function processOptions(options, customPlugin) {
 
   // Parse plugin names
   const plugins = (options.plugins || []).map(pluginName => {
-    const plugin = loadBuiltin(availablePlugins, pluginName);
-
+    let plugin;
+    try {
+      plugin = loadBuiltin(availablePlugins, pluginName);
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
     if (!plugin) {
       throw new Error(
         `Invalid plugin specified in Babel options: "${pluginName}"`

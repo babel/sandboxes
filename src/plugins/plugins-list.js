@@ -1,4 +1,5 @@
 import * as Babel from "@babel/standalone";
+import loadedItems from "./loadedItems";
 
 // If you want to add custom plugins or presets, you can register them
 // at plugins-list.js in dependencies
@@ -87,6 +88,10 @@ const pluginMap = new Map([
 
 export function addDefaultPlugins() {
   Object.keys(plugins).forEach(pluginName => {
+    if (loadedItems.has(pluginName)) {
+      return;
+    }
+    loadedItems.add(pluginName);
     const script = document.createElement("script");
     script.src = plugins[pluginName].fileLocation;
     script.async = true;

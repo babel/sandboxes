@@ -45,8 +45,13 @@ export function CompiledOutput({
   const [showJSON, setShowJSON] = useState(false);
 
   let saveConfig = useCallback(() => {
-    let options = processOptions(config, debouncedPlugin);
-
+    let options;
+    try {
+      options = processOptions(config, debouncedPlugin);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
     const transitions = new Transition();
     options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
 
