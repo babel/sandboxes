@@ -209,7 +209,7 @@ function VizWrapper(props) {
   );
 
   return (
-    <Segment>
+    <Fragment>
       <Grid>
         <Grid.Column floated="left">
           <Checkbox
@@ -258,7 +258,7 @@ function VizWrapper(props) {
         setCursorAST={setCursorAST}
         plugins={plugins}
       />
-    </Segment>
+    </Fragment>
   );
 }
 
@@ -269,17 +269,9 @@ function JSONViewer({ code, plugins }) {
       plugins,
     ]);
 
-    return (
-      <Segment style={{ overflow: "auto", maxHeight: 800 }}>
-        <JSONPretty data={ast} />
-      </Segment>
-    );
+    return <JSONPretty data={ast} />;
   } catch (err) {
-    return (
-      <Segment style={{ overflow: "auto", maxHeight: 800 }}>
-        <JSONPretty data={err.message} />
-      </Segment>
-    );
+    return <JSONPretty data={err.message} />;
   }
 }
 
@@ -291,17 +283,26 @@ export default function VizOutput(props) {
   const [sortTree, setSortTree] = useState(false);
   const vizProps = { setHideEmpty, setHideTypes, setHideLocation, setSortTree };
   const settings = { hideEmpty, hideTypes, hideLocation, sortTree };
+  const jsonStyles = {
+    overflow: "auto",
+    maxHeight: 800,
+    display: showJSON ? "block" : "none",
+  };
+  const asteStyles = {
+    display: showJSON ? "none" : "block",
+  };
 
   return (
     <Grid.Row>
       <Grid.Column>
-        {showJSON ? (
+        <Segment style={jsonStyles}>
           <JSONViewer code={code} plugins={plugins} />
-        ) : (
-          <SettingsContext.Provider value={settings}>
+        </Segment>
+        <SettingsContext.Provider value={settings}>
+          <Segment style={asteStyles}>
             <VizWrapper {...props} {...vizProps} />
-          </SettingsContext.Provider>
-        )}
+          </Segment>
+        </SettingsContext.Provider>
       </Grid.Column>
     </Grid.Row>
   );
