@@ -3,6 +3,7 @@ import { CompiledOutput } from "./CompiledOutput";
 
 export function Output({
   babelConfig,
+  cloneConfig,
   debouncedSource,
   enableCustomPlugin,
   customPlugin,
@@ -17,6 +18,7 @@ export function Output({
       source={debouncedSource}
       customPlugin={enableCustomPlugin ? customPlugin : undefined}
       config={babelConfig}
+      cloneConfig={cloneConfig}
       onConfigChange={config => updateBabelConfig(config, index)}
       removeConfig={() => removeBabelConfig(index)}
       cursor={debouncedCursor}

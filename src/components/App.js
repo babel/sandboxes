@@ -89,6 +89,13 @@ export const App = ({
           render: () => (
             <Output
               babelConfig={config}
+              cloneConfig={() => {
+                setJsonConfig(configs => [
+                  ...configs,
+                  // Deep copy of config
+                  JSON.parse(JSON.stringify(config)),
+                ])
+              }}
               enableCustomPlugin={enableCustomPlugin}
               customPlugin={customPlugin}
               updateBabelConfig={updateBabelConfig}

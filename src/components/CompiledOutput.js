@@ -24,6 +24,7 @@ export function CompiledOutput({
   source,
   customPlugin,
   config,
+  cloneConfig,
   onConfigChange,
   removeConfig,
   cursor,
@@ -245,6 +246,10 @@ export function CompiledOutput({
                     setTimeTravelIndex(timeTravelIndex + 1);
                   }
                 }}
+              />
+              <Button
+                content="Clone"
+                onClick={cloneConfig}
               />
             </Menu.Menu>
           </Menu>
