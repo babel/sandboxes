@@ -3,14 +3,15 @@
  * @returns {boolean}
  */
 function isShareLink() {
-  const path = window.location.pathname;
+  const path = window.location.hash;
   const shareIndicator = "share";
   return path.includes(shareIndicator);
 }
 
 function extractID() {
+
   // Attempt to capture :key from http://example.com/share/:key/
-  const pathParts = window.location.pathname.split("/");
+  const pathParts = window.location.hash.split("/");
   if (pathParts[1] === "share" && pathParts[2]) {
     return pathParts[2];
   } else {
@@ -18,6 +19,7 @@ function extractID() {
       "Trying to extract ID from a share link that doesn't have one."
     );
   }
+
 }
 
 export { isShareLink, extractID };
