@@ -9,8 +9,9 @@ import { Output } from "./Output";
 import { gzipSize } from "../gzip";
 import { Root } from "./styles";
 import { useDebounce } from "../utils/useDebounce";
+import SplitPane from 'react-split-pane';
 
-import { Grid, Tab } from "semantic-ui-react";
+import { Tab } from "semantic-ui-react";
 
 window.babel = Babel;
 
@@ -22,7 +23,7 @@ export const App = ({
   defaultForks,
 }) => {
   const [source, setSource] = React.useState(defaultSource);
-  const [enableCustomPlugin, toggleCustomPlugin] = React.useState(false);
+  const [enableCustomPlugin, toggleCustomPlugin] = React.useState(true);
   const [customPlugin, setCustomPlugin] = React.useState(defCustomPlugin);
   const [id, setId] = useState(defaultId);
   const [jsonConfig, setJsonConfig] = useState(
@@ -79,9 +80,9 @@ export const App = ({
       jsonConfig.map((config, index) => {
         let name;
         if (!index) {
-          name = "config.json";
+          name = "Config.json";
         } else {
-          name = `config_${index}.json`;
+          name = `Config${index + 1}.json`;
         }
 
         return {
@@ -122,25 +123,25 @@ export const App = ({
 
   return (
     <Root>
-      <MainMenu
-        source={source}
-        setSource={setSource}
-        jsonConfig={jsonConfig}
-        setBabelConfig={setJsonConfig}
-        customPlugin={customPlugin}
-        toggleCustomPlugin={toggleCustomPlugin}
-        enableCustomPlugin={enableCustomPlugin}
-        id={id}
-        setId={setId}
-        toggleForksVisible={toggleForksVisible}
-        forks={forks}
-        setForks={setForks}
-        configsCount={jsonConfig.length}
-      />
-
-      <Grid divided>
-        <Grid.Row>
-          <Grid.Column width="5">
+      <SplitPane split="vertical" minSize={50} defaultSize={400}>
+        <SplitPane split="horizontal" minSize={40} defaultSize={500}>
+          <div style={{ width: '100%', height: '100%' }}>
+            <MainMenu
+              source={source}
+              setSource={setSource}
+              jsonConfig={jsonConfig}
+              setBabelConfig={setJsonConfig}
+              customPlugin={customPlugin}
+              toggleCustomPlugin={toggleCustomPlugin}
+              enableCustomPlugin={enableCustomPlugin}
+              id={id}
+              setId={setId}
+              toggleForksVisible={toggleForksVisible}
+              forks={forks}
+              setForks={setForks}
+              configsCount={jsonConfig.length}
+              style={{ zIndex: 100 }}
+            />
             <Input
               size={size}
               gzip={gzip}
@@ -149,31 +150,29 @@ export const App = ({
               setSource={setSource}
               setCursor={setCursor}
             />
-          </Grid.Column>
-          <Grid.Column width="11">
-            <Tab
-              panes={panes}
-              menu={{
-                color: "black",
-                inverted: true,
-                tabular: false,
-                attached: true,
-              }}
-            />
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+          </div>
+          <>
+            {forksVisible && <Forks forks={forks} />}
+            {enableCustomPlugin && (
+              <CustomPlugin
+                toggleCustomPlugin={toggleCustomPlugin}
+                customPlugin={customPlugin}
+                setCustomPlugin={setCustomPlugin}
+              />
+            )}
+          </>
+        </SplitPane>
+        <Tab
+          panes={panes}
+          menu={{
+            color: "black",
+            inverted: true,
+            tabular: false,
+            attached: true,
+          }}
+        />
+      </SplitPane>
 
-      <Grid celled="internally">
-        {forksVisible && <Forks forks={forks} />}
-        {enableCustomPlugin && (
-          <CustomPlugin
-            toggleCustomPlugin={toggleCustomPlugin}
-            customPlugin={customPlugin}
-            setCustomPlugin={setCustomPlugin}
-          />
-        )}
-      </Grid>
     </Root>
   );
 };

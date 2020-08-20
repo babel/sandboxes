@@ -40,15 +40,15 @@ function CompositeObj({ k, obj, cursor, setPos }) {
           {typeof v === "object" && v !== null ? (
             <Composite k={i} ast={v} cursor={cursor} setPos={setPos} />
           ) : (
-            <Primitive k={i} val={v} />
-          )}
+              <Primitive k={i} val={v} />
+            )}
         </Fragment>,
       ];
     });
     subTree = sortTree
       ? subTree.sort((former, latter) => {
-          return sortByCompositeness(former[0], latter[0]);
-        })
+        return sortByCompositeness(former[0], latter[0]);
+      })
       : subTree;
     return subTree.map(v => v[1]);
   }, [obj, cursor, setPos, hideTypes, hideLocation, sortTree]);
@@ -79,8 +79,8 @@ function CompositeObj({ k, obj, cursor, setPos }) {
                 trigger={<span>{title}</span>}
               />
             ) : (
-              title
-            )
+                title
+              )
           }
         />
       ),
@@ -116,8 +116,8 @@ function CompositeArr({ k, arr, cursor, setPos }) {
           {typeof value === "object" && value !== null ? (
             <Composite k={k} ast={value} cursor={cursor} setPos={setPos} />
           ) : (
-            <Primitive k={k} ast={value} />
-          )}
+              <Primitive k={k} ast={value} />
+            )}
         </Fragment>
       );
     });
@@ -159,8 +159,8 @@ function Composite({ k, ast, cursor, setPos }) {
   return !Array.isArray(ast) ? (
     <CompositeObj k={k} obj={ast} cursor={cursor} setPos={setPos} />
   ) : (
-    <CompositeArr k={k} arr={ast} cursor={cursor} setPos={setPos} />
-  );
+      <CompositeArr k={k} arr={ast} cursor={cursor} setPos={setPos} />
+    );
 }
 
 // This is the base case for the recursion when the AST is just a leaf node.

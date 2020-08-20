@@ -16,11 +16,11 @@ export function ForkModal({ trigger, onFork }) {
         <p>Would you like to fork the current config?</p>
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={() => setOpen(false)}>
+        <Button onClick={() => setOpen(false)}>
           No
         </Button>
         <Button
-          positive
+          color="blue"
           onClick={() => {
             onFork();
             setOpen(false);

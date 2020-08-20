@@ -1,3 +1,9 @@
 /*******************************
     User Variable Overrides
 *******************************/
+@styledChildAccordionPadding: 3px;
+@styledChildAccordionMargin: 3px;
+@styledTitlePadding: 3px;
+@styledTitleMargin: 3px;
+@styledContentPadding: 3px;
+@styledContentMargin: 3px;

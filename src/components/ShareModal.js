@@ -14,14 +14,15 @@ export function ShareModal({ trigger, shareLink }) {
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
     >
-      <Modal.Header>Share Link</Modal.Header>
+      <Modal.Header inverted>Share Config</Modal.Header>
       <Modal.Content>
         <Input
+          size="large"
           ref={input => {
             textArea = input;
           }}
           action={{
-            color: "teal",
+            color: "blue",
             labelPosition: "right",
             icon: "copy",
             content: "Copy",
@@ -34,7 +35,7 @@ export function ShareModal({ trigger, shareLink }) {
         />
       </Modal.Content>
       <Modal.Actions>
-        <Button negative onClick={() => setOpen(false)}>
+        <Button onClick={() => setOpen(false)}>
           Close
         </Button>
       </Modal.Actions>

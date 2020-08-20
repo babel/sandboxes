@@ -24,7 +24,7 @@ const StyledAccordionTitle = styled(Accordion.Title)`
 `;
 
 const HighlightedSubAccordion = styled(Accordion.Accordion)`
-  background: ${props => (props.highlight ? "#ffff99" : "#ffffff")} !important;
+  background: ${props => (props.highlight ? "#ffff99" : "rgb(221, 221, 221)")} !important;
 `;
 
 const Markdown = styled(ReactMarkdown)`

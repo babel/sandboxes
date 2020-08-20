@@ -11,7 +11,7 @@ export function CustomPlugin({
     <Grid.Row>
       <Grid.Column width={16}>
         <Menu attached="top" tabular inverted>
-          <Menu.Item>plugin.js</Menu.Item>
+          <Menu.Item>Plugin.js</Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item onClick={() => toggleCustomPlugin(false)}>
               <Icon name="close" />
@@ -22,7 +22,7 @@ export function CustomPlugin({
           <Code
             value={customPlugin}
             onChange={val => setCustomPlugin(val)}
-            docName="plugin.js"
+            docName="Plugin.js"
           />
         </Wrapper>
       </Grid.Column>
