@@ -38,17 +38,35 @@ export function loadBuiltin(builtinTable, name) {
   return name;
 }
 
+function trimBabelPluginPrefix(obj) {
+  // Given a string with (anything)plugin-(stuff) return
+  // another string containing (stuff) if (anything)plugin- was present.
+  // Otherwise return the original string.
+  const trimFunc = str => str.replace(/(.*plugin-)(.*)/, "$2");
+
+  // If it's an array return the same array with the first item trimmed.
+  if (Array.isArray(obj) && typeof obj[0] === "string") {
+    return [trimFunc(obj[0]), ...obj.slice(1)];
+  }
+
+  // If it's just a string, return the new string.
+  if (typeof obj === "string") {
+    return trimFunc(obj);
+  }
+
+  // Otherwise just return the original object.
+  return obj;
+}
+
 export function processOptions(options, customPlugin) {
   if (typeof options === "string") options = JSON.parse(options);
 
   // Parse preset names
   const presets = (options.presets || []).map(presetName => {
-    let preset;
-    try {
-      preset = loadBuiltin(availablePresets, presetName);
-    } catch (error) {
-      console.error(error);
-      return null;
+    let preset = loadBuiltin(availablePresets, presetName);
+
+    if (!preset) {
+      preset = loadBuiltin(availablePresets, trimBabelPluginPrefix(presetName));
     }
 
     if (preset) {
@@ -72,13 +90,12 @@ export function processOptions(options, customPlugin) {
 
   // Parse plugin names
   const plugins = (options.plugins || []).map(pluginName => {
-    let plugin;
-    try {
-      plugin = loadBuiltin(availablePlugins, pluginName);
-    } catch (error) {
-      console.error(error);
-      return null;
+    let plugin = loadBuiltin(availablePlugins, pluginName);
+
+    if (!plugin) {
+      plugin = loadBuiltin(availablePlugins, trimBabelPluginPrefix(pluginName));
     }
+
     if (!plugin) {
       throw new Error(
         `Invalid plugin specified in Babel options: "${pluginName}"`
