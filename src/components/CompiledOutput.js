@@ -19,7 +19,6 @@ import {
   Dropdown,
   Button,
 } from "semantic-ui-react";
-import { option } from "commander";
 
 export function CompiledOutput({
   source,
