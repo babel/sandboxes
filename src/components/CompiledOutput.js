@@ -19,6 +19,7 @@ import {
   Dropdown,
   Button,
 } from "semantic-ui-react";
+import { option } from "commander";
 
 export function CompiledOutput({
   source,
@@ -48,8 +49,10 @@ export function CompiledOutput({
 
     let options;
     let code = "";
+    let error = false;
 
     try {
+
       options = processOptions(config, debouncedPlugin);
       const transitions = new Transition();
       options.wrapPluginVisitorMethod = transitions.wrapPluginVisitorMethod;
@@ -62,10 +65,12 @@ export function CompiledOutput({
 
     } catch (error) {
       code = error.message;
+      error = true;
     }
 
     setCompiled({
       code,
+      error,
       size: new Blob([code], { type: "text/plain" }).size,
     });
 
@@ -174,17 +179,8 @@ export function CompiledOutput({
   }
 
   function handleStringConfigChange(configText) {
-
     setStringConfig(configText);
-
-    let sConfig = {};
-
-    try {
-      sConfig = JSON.parse(configText);
-    } catch (e) {
-      return console.error(e)
-    }
-    onConfigChange(sConfig);
+    onConfigChange(configText);
   }
 
   const sourceCode = compiled?.code ?? "";
